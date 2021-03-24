@@ -1,0 +1,9 @@
+asj7526
+1.
+#git add asj7526.txt
+#git commit -m "add text file"
+#git push
+
+2.
+#git commit -am "add text file"
+#git push

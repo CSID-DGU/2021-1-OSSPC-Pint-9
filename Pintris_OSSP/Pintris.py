@@ -9,11 +9,15 @@ block_size = 17 # Height, width of single block
 width = 10 # Board width
 height = 20 # Board height
 framerate = 30 # Bigger -> Slower
+screen_width= 800
+screen_height =450
+mino_row =4
+mino_col =4
 
 pygame.init()
 
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((300, 374))
+screen = pygame.display.set_mode((screen_width, screen_height),pygame.RESIZABLE)
 pygame.time.set_timer(pygame.USEREVENT, framerate * 10)
 pygame.display.set_caption("PINTRIS™")
 
@@ -46,7 +50,7 @@ class ui_variables:
 
     #image
     levelup = pygame.image.load("assets/images/levelup.png")
-    levelup = pygame.transform.smoothscale(levelup,(200,100))
+    levelup = pygame.transform.smoothscale(levelup,(int(screen_width * 0.25),int(screen_height*0.25)))
     #fever = pygame.image.load("assets/images/fever.png")
     #pygame.transform.smoothscale(fever, (200, 100))
 
@@ -68,8 +72,9 @@ class ui_variables:
 
     t_color = [grey_2, cyan, blue, orange, yellow, green, pink, red, grey_3,grey_4]
 
-
-fever_image = 'assets/images/fever.png'
+fever_image=pygame.image.load("assets/images/fever.png")
+#fever_image = 'assets/images/fever.png'
+fever_image = pygame.transform.smoothscale(fever_image, (int(screen_width*0.2), int(screen_height*0.2)))
 
 def draw_image(window, img_path, x, y, width, height):
     x = x - (width / 2)
@@ -94,21 +99,22 @@ def draw_block(x, y, color):
 # Draw game screen
 def draw_board(next, hold, score, level, goal):
     screen.fill(ui_variables.grey_1)
+    sidebar_width = int(screen_width * 0.5312)
 
     # Draw sidebar
     pygame.draw.rect(
         screen,
         ui_variables.white,
-        Rect(204, 0, 96, 374)
+        Rect(sidebar_width, 0, int(screen_width * 0.2375), screen_height)
     )
 
     # Draw next mino
     grid_n = tetrimino.mino_map[next - 1][0]
 
-    for i in range(4):
-        for j in range(4):
-            dx = 220 + block_size * j
-            dy = 140 + block_size * i
+    for i in range(mino_col):
+        for j in range(mino_row):
+            dx = int(screen_width * 0.025) + sidebar_width + block_size * j
+            dy = int(screen_height * 0.3743) + block_size * i
             if grid_n[i][j] != 0:
                 pygame.draw.rect(
                     screen,
@@ -120,10 +126,10 @@ def draw_board(next, hold, score, level, goal):
     grid_h = tetrimino.mino_map[hold - 1][0]
 
     if hold_mino != -1:
-        for i in range(4):
-            for j in range(4):
-                dx = 220 + block_size * j
-                dy = 50 + block_size * i
+        for i in range(mino_col):
+            for j in range(mino_row):
+                dx = int(screen_width * 0.045) + sidebar_width + block_size * j
+                dy = int(screen_height * 0.1336) + block_size * i
                 if grid_h[i][j] != 0:
                     pygame.draw.rect(
                         screen,
@@ -146,20 +152,20 @@ def draw_board(next, hold, score, level, goal):
     goal_value = ui_variables.h4.render(str(goal), 1, ui_variables.black)
 
     # Place texts
-    screen.blit(text_hold, (215, 14))
-    screen.blit(text_next, (215, 104))
-    screen.blit(text_score, (215, 194))
-    screen.blit(score_value, (220, 210))
-    screen.blit(text_level, (215, 254))
-    screen.blit(level_value, (220, 270))
-    screen.blit(text_goal, (215, 314))
-    screen.blit(goal_value, (220, 330))
+    screen.blit(text_hold, (int(screen_width * 0.045) + sidebar_width, int(screen_height * 0.0374)))
+    screen.blit(text_next, (int(screen_width * 0.045) + sidebar_width, int(screen_height * 0.2780)))
+    screen.blit(text_score, (int(screen_width * 0.045) + sidebar_width, int(screen_height * 0.5187)))
+    screen.blit(score_value, (int(screen_width * 0.055) + sidebar_width, int(screen_height * 0.5614)))
+    screen.blit(text_level, (int(screen_width * 0.045) + sidebar_width, int(screen_height * 0.6791)))
+    screen.blit(level_value, (int(screen_width * 0.055) + sidebar_width, int(screen_height * 0.7219)))
+    screen.blit(text_goal, (int(screen_width * 0.045) + sidebar_width, int(screen_height * 0.8395)))
+    screen.blit(goal_value, (int(screen_width * 0.055) + sidebar_width, int(screen_height * 0.8823)))
 
     # Draw board
     for x in range(width):
         for y in range(height):
-            dx = 17 + block_size * x
-            dy = 17 + block_size * y
+            dx = int(screen_width * 0.25) + block_size * x
+            dy = int(screen_height * 0.055) + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix[x][y + 1]])
 
 # Draw a tetrimino
@@ -171,14 +177,14 @@ def draw_mino(x, y, mino, r):
         ty += 1
 
     # Draw ghost
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
                 matrix[tx + j][ty + i] = 8
 
     # Draw mino
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
                 matrix[x + j][y + i] = grid[i][j]
 
@@ -187,14 +193,14 @@ def erase_mino(x, y, mino, r):
     grid = tetrimino.mino_map[mino - 1][r]
 
     # Erase ghost
-    for j in range(21):
-        for i in range(10):
+    for j in range(height+1):
+        for i in range(width):
             if matrix[i][j] == 8:
                 matrix[i][j] = 0
 
     # Erase mino
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
                 matrix[x + j][y + i] = 0
 
@@ -202,10 +208,10 @@ def erase_mino(x, y, mino, r):
 def is_bottom(x, y, mino, r):
     grid = tetrimino.mino_map[mino - 1][r]
 
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
-                if (y + i + 1) > 20:
+                if (y + i + 1) > height:
                     return True
                 elif matrix[x + j][y + i + 1] != 0 and matrix[x + j][y + i + 1] != 8:
                     return True
@@ -216,8 +222,8 @@ def is_bottom(x, y, mino, r):
 def is_leftedge(x, y, mino, r):
     grid = tetrimino.mino_map[mino - 1][r]
 
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
                 if (x + j - 1) < 0:
                     return True
@@ -230,10 +236,10 @@ def is_leftedge(x, y, mino, r):
 def is_rightedge(x, y, mino, r):
     grid = tetrimino.mino_map[mino - 1][r]
 
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
-                if (x + j + 1) > 9:
+                if (x + j + 1) > width-1:
                     return True
                 elif matrix[x + j + 1][y + i] != 0:
                     return True
@@ -247,10 +253,10 @@ def is_turnable_r(x, y, mino, r):
     else:
         grid = tetrimino.mino_map[mino - 1][0]
 
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
-                if (x + j) < 0 or (x + j) > 9 or (y + i) < 0 or (y + i) > 20:
+                if (x + j) < 0 or (x + j) > width-1 or (y + i) < 0 or (y + i) > height:
                     return False
                 elif matrix[x + j][y + i] != 0:
                     return False
@@ -264,10 +270,10 @@ def is_turnable_l(x, y, mino, r):
     else:
         grid = tetrimino.mino_map[mino - 1][3]
 
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             if grid[i][j] != 0:
-                if (x + j) < 0 or (x + j) > 9 or (y + i) < 0 or (y + i) > 20:
+                if (x + j) < 0 or (x + j) > width or (y + i) < 0 or (y + i) > height:
                     return False
                 elif matrix[x + j][y + i] != 0:
                     return False
@@ -278,8 +284,8 @@ def is_turnable_l(x, y, mino, r):
 def is_stackable(mino):
     grid = tetrimino.mino_map[mino - 1][0]
 
-    for i in range(4):
-        for j in range(4):
+    for i in range(mino_col):
+        for j in range(mino_row):
             #print(grid[i][j], matrix[3 + j][i])
             if grid[i][j] != 0 and matrix[3 + j][i] != 0:
                 return False
@@ -299,7 +305,7 @@ goal = level * 2
 bottom_count = 0
 hard_drop = False
 fever=0
-fever_count = 0
+fever_score = 500
 current_time=pygame.time.get_ticks()
 
 dx, dy = 3, 0 # Minos location status
@@ -391,7 +397,7 @@ while not done:
                         hard_drop = False
                         bottom_count = 0
                         score += 10 * level
-                        fever +=10 * level
+                        #fever +=10 * level
                         draw_mino(dx, dy, mino, rotation)
                         draw_board(next_mino, hold_mino, score, level, goal)
                         if is_stackable(next_mino):
@@ -409,16 +415,16 @@ while not done:
 
                 # Erase line
                 erase_count = 0
-                for j in range(21):
+                for j in range(height+1):
                     is_full = True
-                    for i in range(10):
+                    for i in range(width):
                         if matrix[i][j] == 0:
                             is_full = False
                     if is_full:
                         erase_count += 1
                         k = j
                         while k > 0:
-                            for i in range(10):
+                            for i in range(width):
                                 matrix[i][k] = matrix[i][k - 1]
                             k -= 1
                 if erase_count == 1:
@@ -440,12 +446,12 @@ while not done:
                     level += 1
                     goal += level * 2
                     framerate = int(framerate * 0.8)
-                    screen.blit(ui_variables.levelup, (50, 80))
+                    screen.blit(ui_variables.levelup, (screen_width*0.3, screen_height*0.2))
                     pygame.display.update()
                     pygame.time.delay(300)
-                    for j in range(20):
-                        for i in range(10):
-                            matrix[i][j] = matrix[i][j + 1]       #2P의 기존있던블럭들 한칸증가
+                    for j in range(height):
+                        for i in range(width):
+                            matrix[i][j] = matrix[i][j + 1]       # 기존있던블럭들 한칸증가
 
 
                     for i in range(10):
@@ -455,13 +461,17 @@ while not done:
 
                 #점수 구간에 따른 피버타임
                 for i in range(1,100,3):
-                    if score >i*500 and score < (i+1)*500: #500~1000,2000~2500.3500~4000
+                    if score >i*fever_score and score < (i+1)*fever_score: #500~1000,2000~2500.3500~4000
                         mino=randint(1,1)
                         next_mino=randint(1,1)
 
-                        draw_image(screen, fever_image, 200,50,100,100) #x축 y축, 가로, 세로
-                        pygame.display.update()
-
+                        #draw_image(screen, fever_image, screen_width*0.25,screen_height * 0.11,int(screen_width*0.125),int(screen_height*0.25)) #x축 y축, 가로, 세로
+                        #pygame.display.update()
+                        if blink:
+                            screen.blit(fever_image, (screen_width *0.15, screen_height * 0.1))  # fever time시 이미지 깜빡거리게 #위치
+                            blink = False
+                        else:
+                            blink = True
 
 
 
@@ -637,10 +647,10 @@ while not done:
                     hold_mino = -1
                     framerate = 30
                     score = 0
-                    score = 0
-                    fever=0
+                    fever_score = 500
+                    #fever=0
                     level = 1
-                    goal = level * 5
+                    goal = level * 2
                     bottom_count = 0
                     hard_drop = False
                     name_location = 0
@@ -693,13 +703,13 @@ while not done:
                 if event.key == K_SPACE:
                     ui_variables.click_sound.play()
                     start = True
-
+        block_size = int(screen_height * 0.045) #화면에따른 한개의 블럭크기 조절
         # pygame.time.set_timer(pygame.USEREVENT, 300)
         screen.fill(ui_variables.white)
         pygame.draw.rect(
             screen,
             ui_variables.grey_1,
-            Rect(0, 187, 300, 187)
+            Rect(int(screen_width * 0.2337), int(screen_height * 0.4155), int(screen_width * 0.375), int(screen_height * 0.4155))
         )
 
         title = ui_variables.h1.render("PYTRIS™", 1, ui_variables.grey_1)

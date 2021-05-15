@@ -22,6 +22,7 @@ framerate = 30 # Bigger -> Slower
 
 
 pygame.init()
+pygame.key.set_repeat(100, 300)
 
 class ui_variables:
     # Fonts

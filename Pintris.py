@@ -5,11 +5,10 @@ from random import *
 from pygame.locals import *
 
 from mino import *
-#test
-#pull request test
+
 # Constants
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 300
+SCREEN_HEIGHT = 374
 
 STARTING_FRAMERATE_BY_DIFFCULTY = [50, 30, 20]
 FRAMELATE_MULTIFLIER_BY_DIFFCULTY = [0.9, 0.8, 0.7]
@@ -19,7 +18,6 @@ block_size = 17 # Height, width of single block
 width = 10 # Board width
 height = 20 # Board height
 framerate = 30 # Bigger -> Slower
-
 
 pygame.init()
 
@@ -52,7 +50,7 @@ class ui_variables:
 
     #image
     levelup = pygame.image.load("assets/images/levelup.png")
-    levelup = pygame.transform.smoothscale(levelup,(int(SCREEN_WIDTH * 0.25),int(SCREEN_HEIGHT*0.25)))
+    levelup = pygame.transform.smoothscale(levelup,(200,100))
     #fever = pygame.image.load("assets/images/fever.png")
     #pygame.transform.smoothscale(fever, (200, 100))
 
@@ -75,8 +73,7 @@ class ui_variables:
     t_color = [grey_2, cyan, blue, orange, yellow, green, pink, red, grey_3,grey_4]
 
 
-fever_image=pygame.image.load("assets/images/fever.png")
-fever_image = pygame.transform.smoothscale(fever_image, (int(SCREEN_WIDTH*0.2), int(SCREEN_HEIGHT*0.2)))
+fever_image = 'assets/images/fever.png'
 
 def draw_image(window, img_path, x, y, width, height):
     x = x - (width / 2)
@@ -101,13 +98,12 @@ def draw_block(x, y, color):
 # Draw game screen
 def draw_board(next, hold, score, level, goal):
     screen.fill(ui_variables.grey_1)
-    sidebar_width = int(SCREEN_WIDTH * 0.5312)
 
     # Draw sidebar
     pygame.draw.rect(
         screen,
         ui_variables.white,
-        Rect(sidebar_width, 0, int(SCREEN_WIDTH * 0.2375), SCREEN_HEIGHT)
+        Rect(204, 0, 96, 374)
     )
 
     # Draw next mino
@@ -115,8 +111,8 @@ def draw_board(next, hold, score, level, goal):
 
     for i in range(4):
         for j in range(4):
-            dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
-            dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
+            dx = 220 + block_size * j
+            dy = 140 + block_size * i
             if grid_n[i][j] != 0:
                 pygame.draw.rect(
                     screen,
@@ -154,20 +150,20 @@ def draw_board(next, hold, score, level, goal):
     goal_value = ui_variables.h4.render(str(goal), 1, ui_variables.black)
 
     # Place texts
-    screen.blit(text_hold, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.0374)))
-    screen.blit(text_next, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.2780)))
-    screen.blit(text_score, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.5187)))
-    screen.blit(score_value, (int(SCREEN_WIDTH  * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.5614)))
-    screen.blit(text_level, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.6791)))
-    screen.blit(level_value, (int(SCREEN_WIDTH  * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.7219)))
-    screen.blit(text_goal, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.8395)))
-    screen.blit(goal_value, (int(SCREEN_WIDTH  * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.8823)))
+    screen.blit(text_hold, (215, 14))
+    screen.blit(text_next, (215, 104))
+    screen.blit(text_score, (215, 194))
+    screen.blit(score_value, (220, 210))
+    screen.blit(text_level, (215, 254))
+    screen.blit(level_value, (220, 270))
+    screen.blit(text_goal, (215, 314))
+    screen.blit(goal_value, (220, 330))
 
     # Draw board
     for x in range(width):
         for y in range(height):
-            dx = int(SCREEN_WIDTH * 0.25) + block_size * x
-            dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
+            dx = 17 + block_size * x
+            dy = 17 + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix[x][y + 1]])
 
 # Draw a tetrimino
@@ -195,8 +191,8 @@ def erase_mino(x, y, mino, r):
     grid = tetrimino.mino_map[mino - 1][r]
 
     # Erase ghost
-    for j in range(height+1):
-        for i in range(width):
+    for j in range(21):
+        for i in range(10):
             if matrix[i][j] == 8:
                 matrix[i][j] = 0
 
@@ -213,7 +209,7 @@ def is_bottom(x, y, mino, r):
     for i in range(4):
         for j in range(4):
             if grid[i][j] != 0:
-                if (y + i + 1) > height:
+                if (y + i + 1) > 20:
                     return True
                 elif matrix[x + j][y + i + 1] != 0 and matrix[x + j][y + i + 1] != 8:
                     return True
@@ -241,7 +237,7 @@ def is_rightedge(x, y, mino, r):
     for i in range(4):
         for j in range(4):
             if grid[i][j] != 0:
-                if (x + j + 1) > width-1:
+                if (x + j + 1) > 9:
                     return True
                 elif matrix[x + j + 1][y + i] != 0:
                     return True
@@ -258,7 +254,7 @@ def is_turnable_r(x, y, mino, r):
     for i in range(4):
         for j in range(4):
             if grid[i][j] != 0:
-                if (x + j) < 0 or (x + j) > width-1 or (y + i) < 0 or (y + i) > height:
+                if (x + j) < 0 or (x + j) > 9 or (y + i) < 0 or (y + i) > 20:
                     return False
                 elif matrix[x + j][y + i] != 0:
                     return False
@@ -275,7 +271,7 @@ def is_turnable_l(x, y, mino, r):
     for i in range(4):
         for j in range(4):
             if grid[i][j] != 0:
-                if (x + j) < 0 or (x + j) > width-1 or (y + i) < 0 or (y + i) > height:
+                if (x + j) < 0 or (x + j) > 9 or (y + i) < 0 or (y + i) > 20:
                     return False
                 elif matrix[x + j][y + i] != 0:
                     return False
@@ -296,7 +292,7 @@ def is_stackable(mino):
 
 # Start game
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.RESIZABLE)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.time.set_timer(pygame.USEREVENT, framerate * 10)
 pygame.display.set_caption("PINTRIS™")
 
@@ -314,7 +310,7 @@ difficulty = 0
 goal = level * 2
 bottom_count = 0
 hard_drop = False
-fever_score = 500
+fever=0
 fever_count = 0
 current_time=pygame.time.get_ticks()
 
@@ -389,7 +385,7 @@ while not done:
                 # Draw a mino
                 draw_mino(dx, dy, mino, rotation)
                 draw_board(next_mino, hold_mino, score, level, goal)
-                pygame.display.update()
+
 
                 # Erase a mino
                 if not game_over:
@@ -406,7 +402,7 @@ while not done:
                         hard_drop = False
                         bottom_count = 0
                         score += 10 * level
-                        #fever +=10 * level
+                        fever +=10 * level
                         draw_mino(dx, dy, mino, rotation)
                         draw_board(next_mino, hold_mino, score, level, goal)
                         if is_stackable(next_mino):
@@ -424,16 +420,16 @@ while not done:
 
                 # Erase line
                 erase_count = 0
-                for j in range(height+1):
+                for j in range(21):
                     is_full = True
-                    for i in range(width):
+                    for i in range(10):
                         if matrix[i][j] == 0:
                             is_full = False
                     if is_full:
                         erase_count += 1
                         k = j
                         while k > 0:
-                            for i in range(width):
+                            for i in range(10):
                                 matrix[i][k] = matrix[i][k - 1]
                             k -= 1
                 if erase_count == 1:
@@ -455,31 +451,27 @@ while not done:
                     level += 1
                     goal += level * 2
                     framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
-                    screen.blit(ui_variables.levelup, (SCREEN_WIDTH*0.3, SCREEN_HEIGHT*0.2))
+                    screen.blit(ui_variables.levelup, (50, 80))
                     pygame.display.update()
                     pygame.time.delay(300)
-                    for j in range(height):
-                        for i in range(width):
-                            matrix[i][j] = matrix[i][j + 1]       #기존있던블럭들 한칸증가
+                    for j in range(20):
+                        for i in range(10):
+                            matrix[i][j] = matrix[i][j + 1]       #2P의 기존있던블럭들 한칸증가
 
 
-                    for i in range(width):
+                    for i in range(10):
                         matrix[i][20] = 9                            #방해블록이 맨밑줄을 채움
                     k = randint(1, 9)
                     matrix[k][20] = 0                                #한군데가 구멍나있게 증가
 
                 #점수 구간에 따른 피버타임
                 for i in range(1,100,3):
-                    if score >i*fever_score and score < (i+1)*fever_score: #500~1000,2000~2500.3500~4000
+                    if score >i*500 and score < (i+1)*500: #500~1000,2000~2500.3500~4000
                         mino=randint(1,1)
                         next_mino=randint(1,1)
 
-                        if blink:
-                            screen.blit(fever_image,
-                                        (SCREEN_WIDTH * 0.15, SCREEN_HEIGHT * 0.1))  # fever time시 이미지 깜빡거리게 #위치
-                            blink = False
-                        else:
-                            blink = True
+                        draw_image(screen, fever_image, 200,50,100,100) #x축 y축, 가로, 세로
+                        pygame.display.update()
 
             elif event.type == KEYDOWN:
                 erase_mino(dx, dy, mino, rotation)
@@ -592,10 +584,6 @@ while not done:
                         dx += 1
                     draw_mino(dx, dy, mino, rotation)
                     draw_board(next_mino, hold_mino, score, level, goal)
-            elif event.type == VIDEORESIZE:
-                SCREEN_WIDTH = event.w
-                SCREEN_HEIGHT = event.h
-                block_size = int(SCREEN_HEIGHT * 0.045)
 
         pygame.display.update()
 
@@ -611,8 +599,8 @@ while not done:
                 over_start = ui_variables.h5.render("Press return to continue", 1, ui_variables.white)
 
                 draw_board(next_mino, hold_mino, score, level, goal)
-                screen.blit(over_text_1, (SCREEN_WIDTH*0.0775, SCREEN_HEIGHT*0.167))
-                screen.blit(over_text_2, (SCREEN_WIDTH*0.0775, SCREEN_HEIGHT*0.233))
+                screen.blit(over_text_1, (58, 75))
+                screen.blit(over_text_2, (62, 105))
 
                 name_1 = ui_variables.h2_i.render(chr(name[0]), 1, ui_variables.white)
                 name_2 = ui_variables.h2_i.render(chr(name[1]), 1, ui_variables.white)
@@ -622,27 +610,21 @@ while not done:
                 underbar_2 = ui_variables.h2.render("_", 1, ui_variables.white)
                 underbar_3 = ui_variables.h2.render("_", 1, ui_variables.white)
 
-                screen.blit(name_1, (SCREEN_WIDTH*0.08125, SCREEN_HEIGHT*0.326))
-                screen.blit(name_2, (SCREEN_WIDTH*0.11875, SCREEN_HEIGHT*0.326))
-                screen.blit(name_3, (SCREEN_WIDTH*0.15625, SCREEN_HEIGHT*0.326))
+                screen.blit(name_1, (65, 147))
+                screen.blit(name_2, (95, 147))
+                screen.blit(name_3, (125, 147))
 
                 if blink:
-                    screen.blit(over_start, (SCREEN_WIDTH*0.05, SCREEN_HEIGHT*0.4333))
+                    screen.blit(over_start, (32, 195))
                     blink = False
                 else:
                     if name_location == 0:
-                        screen.blit(underbar_1, (SCREEN_WIDTH*0.08125-2, SCREEN_HEIGHT*0.326-2))
+                        screen.blit(underbar_1, (65, 145))
                     elif name_location == 1:
-                        screen.blit(underbar_2, (SCREEN_WIDTH*0.11875-2, SCREEN_HEIGHT*0.326-2))
+                        screen.blit(underbar_2, (95, 145))
                     elif name_location == 2:
-                        screen.blit(underbar_3, (SCREEN_WIDTH*0.15625, SCREEN_HEIGHT*0.326-2))
+                        screen.blit(underbar_3, (125, 145))
                     blink = True
-                pygame.display.update()
-            # 마우스로 창크기조절
-            elif event.type == VIDEORESIZE:
-                SCREEN_WIDTH = event.w
-                SCREEN_HEIGHT = event.h
-                block_size = int(SCREEN_HEIGHT * 0.045)
 
                 pygame.display.update()
             elif event.type == KEYDOWN:
@@ -661,7 +643,7 @@ while not done:
                     next_mino = randint(1, 7)
                     hold_mino = -1
                     framerate = 30
-                    fever_score = 500
+                    score = 0
                     score = 0
                     fever=0
                     level = 1
@@ -734,69 +716,34 @@ while not done:
                             # goto menu page
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
-                    elif event.type == VIDEORESIZE:
-                        SCREEN_WIDTH = event.w
-                        SCREEN_HEIGHT = event.h
 
-                        block_size = int(SCREEN_HEIGHT * 0.045)
-                        screen.fill(ui_variables.white)
-                        pygame.draw.rect(
-                            screen,
-                            ui_variables.grey_1,
-                            Rect(0, 0, int(SCREEN_WIDTH),
-                            int(SCREEN_HEIGHT * 0.24))
-                                )
-
-                        title = ui_variables.h1.render("PINTRIS™", 1, ui_variables.white)
-                        title_menu = ui_variables.h5.render("Press space to MENU", 1, ui_variables.grey_1)
-                        title_info = ui_variables.h6.render("Copyright (c) 2021 PINT Rights Reserved.", 1, ui_variables.grey_1)
-
-                        leader_1 = ui_variables.h5_i.render('1st ' + leaders[0][0] + ' ' + str(leaders[0][1]), 1, ui_variables.white)
-                        leader_2 = ui_variables.h5_i.render('2nd ' + leaders[1][0] + ' ' + str(leaders[1][1]), 1, ui_variables.white)
-                        leader_3 = ui_variables.h5_i.render('3rd ' + leaders[2][0] + ' ' + str(leaders[2][1]), 1, ui_variables.white)
-
-                        if blink:
-                            screen.blit(title_menu, title.get_rect(center=(SCREEN_WIDTH/2+40, SCREEN_HEIGHT *0.44)))
-
-                        blink = not blink
-
-                        screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT *0.1)))
-                        screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT *0.77)))
-
-                        screen.blit(leader_1, (int(SCREEN_WIDTH * 0.033), int(SCREEN_HEIGHT *0.0347)))
-                        screen.blit(leader_1, (int(SCREEN_WIDTH * 0.033), int(SCREEN_HEIGHT *0.0614)))
-                        screen.blit(leader_1, (int(SCREEN_WIDTH * 0.033), int(SCREEN_HEIGHT *0.096)))
-                block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
                 pygame.draw.rect(
                     screen,
                     ui_variables.grey_1,
-                    Rect(0, 0, int(SCREEN_WIDTH),
-                         int(SCREEN_HEIGHT * 0.24))
+                    Rect(0, 187, 300, 187)
                 )
 
-                title = ui_variables.h1.render("PINTRIS™", 1, ui_variables.white)
-                title_menu = ui_variables.h5.render("Press space to MENU", 1, ui_variables.grey_1)
-                title_info = ui_variables.h6.render("Copyright (c) 2021 PINT Rights Reserved.", 1, ui_variables.grey_1)
+                title = ui_variables.h1.render("PYTRIS™", 1, ui_variables.grey_1)
+                title_menu = ui_variables.h5.render("Press space to MENU", 1, ui_variables.white)
+                title_info = ui_variables.h6.render("Copyright (c) 2017 Jason Kim All Rights Reserved.", 1, ui_variables.white)
 
-                leader_1 = ui_variables.h5_i.render('1st ' + leaders[0][0] + ' ' + str(leaders[0][1]), 1,
-                                                    ui_variables.white)
-                leader_2 = ui_variables.h5_i.render('2nd ' + leaders[1][0] + ' ' + str(leaders[1][1]), 1,
-                                                    ui_variables.white)
-                leader_3 = ui_variables.h5_i.render('3rd ' + leaders[2][0] + ' ' + str(leaders[2][1]), 1,
-                                                    ui_variables.white)
+                leader_1 = ui_variables.h5_i.render('1st ' + leaders[0][0] + ' ' + str(leaders[0][1]), 1, ui_variables.grey_1)
+                leader_2 = ui_variables.h5_i.render('2nd ' + leaders[1][0] + ' ' + str(leaders[1][1]), 1, ui_variables.grey_1)
+                leader_3 = ui_variables.h5_i.render('3rd ' + leaders[2][0] + ' ' + str(leaders[2][1]), 1, ui_variables.grey_1)
 
                 if blink:
-                    screen.blit(title_menu, title.get_rect(center=(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT * 0.44)))
+                    screen.blit(title_menu, (92, 195))
 
                 blink = not blink
 
-                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
+                screen.blit(title, (65, 120))
+                screen.blit(title_info, (40, 335))
 
-                screen.blit(leader_1, (int(SCREEN_WIDTH * 0.033), int(SCREEN_HEIGHT * 0.0347)))
-                screen.blit(leader_1, (int(SCREEN_WIDTH * 0.033), int(SCREEN_HEIGHT * 0.0614)))
-                screen.blit(leader_1, (int(SCREEN_WIDTH * 0.033), int(SCREEN_HEIGHT * 0.096)))
+                screen.blit(leader_1, (10, 10))
+                screen.blit(leader_2, (10, 23))
+                screen.blit(leader_3, (10, 36))
+
             # MENU PAGE
             elif page == MENU_PAGE:
                 current_selected = selected
@@ -831,76 +778,27 @@ while not done:
                                 # select settings menu, goto settings menu
                                 ui_variables.click_sound.play()
                                 page = SETTING_PAGE
-                    #마우스로 창크기조절
-                    elif event.type == VIDEORESIZE:
-                        SCREEN_WIDTH = event.w
-                        SCREEN_HEIGHT = event.h
-                        block_size = int(SCREEN_HEIGHT * 0.045)
-                        screen.fill(ui_variables.white)
-                        pygame.draw.rect(
-                            screen,
-                            ui_variables.grey_1,
-                            Rect(0, 0, int(SCREEN_WIDTH),
-                                 int(SCREEN_HEIGHT * 0.24))
-                        )
 
-                        title = ui_variables.h1.render("PINTRIS™", 1, ui_variables.white)
-                        title_info = ui_variables.h6.render("Press up and down to change, space to select", 1,
-                                                            ui_variables.grey_1)
-
-                        screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                        screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
-
-                        title_start = ui_variables.h5.render("Game start", 1, ui_variables.grey_1)
-                        title_help = ui_variables.h5.render("Help", 1, ui_variables.grey_1)
-                        title_setting = ui_variables.h5.render("Settings", 1, ui_variables.grey_1)
-
-                        pos_start = title_start.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20))
-                        pos_help = title_help.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 20))
-                        pos_setting = title_setting.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 60))
-
-                        # blink current selected option
-                        if blink:
-                            if current_selected == 0:
-                                screen.blit(title_help, pos_help)
-                                screen.blit(title_setting, pos_setting)
-                            elif current_selected == 1:
-                                screen.blit(title_start, pos_start)
-                                screen.blit(title_setting, pos_setting)
-                            else:
-                                screen.blit(title_start, pos_start)
-                                screen.blit(title_help, pos_help)
-                        else:
-                            screen.blit(title_start, pos_start)
-                            screen.blit(title_help, pos_help)
-                            screen.blit(title_setting, pos_setting)
-
-                        blink = not blink
-
-
-                block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
                 pygame.draw.rect(
                     screen,
                     ui_variables.grey_1,
-                    Rect(0, 0, int(SCREEN_WIDTH),
-                         int(SCREEN_HEIGHT * 0.24))
+                    Rect(0, 0, 300, 90)
                 )
 
-                title = ui_variables.h1.render("PINTRIS™", 1, ui_variables.white)
-                title_info = ui_variables.h6.render("Press up and down to change, space to select", 1,
-                                                    ui_variables.grey_1)
+                title = ui_variables.h1.render("PYTRIS™", 1, ui_variables.white)
+                title_info = ui_variables.h6.render("Press up and down to change, space to select", 1, ui_variables.grey_1)
 
-                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
+                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, 45)))
+                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, 350)))
 
                 title_start = ui_variables.h5.render("Game start", 1, ui_variables.grey_1)
                 title_help = ui_variables.h5.render("Help", 1, ui_variables.grey_1)
                 title_setting = ui_variables.h5.render("Settings", 1, ui_variables.grey_1)
 
-                pos_start = title_start.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20))
-                pos_help = title_help.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 20))
-                pos_setting = title_setting.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 60))
+                pos_start = title_start.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 20))
+                pos_help = title_help.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20))
+                pos_setting = title_setting.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 60))
 
                 # blink current selected option
                 if blink:
@@ -930,51 +828,21 @@ while not done:
                         if event.key == K_ESCAPE:
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
-                    # 마우스로 창크기조절
-                    elif event.type == VIDEORESIZE:
-                        SCREEN_WIDTH = event.w
-                        SCREEN_HEIGHT = event.h
-                        block_size = int(SCREEN_HEIGHT * 0.045)
-                        screen.fill(ui_variables.white)
-                        pygame.draw.rect(
-                            screen,
-                            ui_variables.grey_1,
-                            pygame.draw.rect(
-                                screen,
-                                ui_variables.grey_1,
-                                Rect(0, 0, int(SCREEN_WIDTH),
-                                     int(SCREEN_HEIGHT * 0.24))
-                            )
-                        )
 
-                        title = ui_variables.h1.render("HELP", 1, ui_variables.white)
-                        title_explain = ui_variables.h5.render("Help page", 1, ui_variables.grey_1)
-                        title_info = ui_variables.h6.render("Press esc to return menu", 1, ui_variables.grey_1)
-
-                        screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                        screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
-                        screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
-
-                block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
                 pygame.draw.rect(
                     screen,
                     ui_variables.grey_1,
-                    pygame.draw.rect(
-                        screen,
-                        ui_variables.grey_1,
-                        Rect(0, 0, int(SCREEN_WIDTH),
-                             int(SCREEN_HEIGHT * 0.24))
-                    )
+                    Rect(0, 0, 300, 90)
                 )
 
                 title = ui_variables.h1.render("HELP", 1, ui_variables.white)
                 title_explain = ui_variables.h5.render("Help page", 1, ui_variables.grey_1)
                 title_info = ui_variables.h6.render("Press esc to return menu", 1, ui_variables.grey_1)
 
-                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT*0.1)))
+                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, 45)))
                 screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)))
-                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT*0.77)))
+                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, 350)))
 
             # Setting Page
             elif page == SETTING_PAGE:
@@ -986,51 +854,21 @@ while not done:
                             # back to menu page
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
-                    # 마우스로 창크기조절
-                    elif event.type == VIDEORESIZE:
-                        SCREEN_WIDTH = event.w
-                        SCREEN_HEIGHT = event.h
-                        block_size = int(SCREEN_HEIGHT * 0.045)
-                        screen.fill(ui_variables.white)
-                        pygame.draw.rect(
-                            screen,
-                            ui_variables.grey_1,
-                            pygame.draw.rect(
-                                screen,
-                                ui_variables.grey_1,
-                                Rect(0, 0, int(SCREEN_WIDTH),
-                                     int(SCREEN_HEIGHT * 0.24))
-                            )
-                        )
 
-                        title = ui_variables.h1.render("SETTINGS", 1, ui_variables.white)
-                        title_explain = ui_variables.h5.render("Setting page", 1, ui_variables.grey_1)
-                        title_info = ui_variables.h6.render("Press esc to return menu", 1, ui_variables.grey_1)
-
-                        screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                        screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
-                        screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
-
-                block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
                 pygame.draw.rect(
                     screen,
                     ui_variables.grey_1,
-                    pygame.draw.rect(
-                        screen,
-                        ui_variables.grey_1,
-                        Rect(0, 0, int(SCREEN_WIDTH),
-                             int(SCREEN_HEIGHT * 0.24))
-                    )
+                    Rect(0, 0, 300, 90)
                 )
 
                 title = ui_variables.h1.render("SETTINGS", 1, ui_variables.white)
                 title_explain = ui_variables.h5.render("Setting page", 1, ui_variables.grey_1)
                 title_info = ui_variables.h6.render("Press esc to return menu", 1, ui_variables.grey_1)
 
-                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT*0.1)))
+                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, 45)))
                 screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)))
-                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT*0.77)))
+                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, 350)))
 
             # difficulty page
             elif page == DIFFICULTY_PAGE:
@@ -1059,51 +897,12 @@ while not done:
                             start = True
                             difficulty = selected
                             framerate = STARTING_FRAMERATE_BY_DIFFCULTY[selected]
-                    # 마우스로 창크기조절
-                    elif event.type == VIDEORESIZE:
-                        SCREEN_WIDTH = event.w
-                        SCREEN_HEIGHT = event.h
-                        block_size = int(SCREEN_HEIGHT * 0.045)
-                        screen.fill(ui_variables.white)
-                        pygame.draw.rect(
-                            screen,
-                            ui_variables.grey_1,
-                            pygame.draw.rect(
-                                screen,
-                                ui_variables.grey_1,
-                                Rect(0, 0, int(SCREEN_WIDTH),
-                                     int(SCREEN_HEIGHT * 0.24))
-                            )
-                        )
 
-                        difficulty_name = ["EASY", "NORMAL", "HARD"][current_selected]
-                        difficulty_explain = [
-                            "Easy mode",
-                            "Normal mode",
-                            "Hard mode",
-                        ][current_selected]
-
-                        title = ui_variables.h1.render(difficulty_name, 1, ui_variables.white)
-                        title_explain = ui_variables.h5.render(difficulty_explain, 1, ui_variables.grey_1)
-                        title_info = ui_variables.h6.render("Press left and right to change, space to start", 1,
-                                                            ui_variables.grey_1)
-
-                        screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                        screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
-                        screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
-
-
-                block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
                 pygame.draw.rect(
                     screen,
                     ui_variables.grey_1,
-                    pygame.draw.rect(
-                        screen,
-                        ui_variables.grey_1,
-                        Rect(0, 0, int(SCREEN_WIDTH),
-                             int(SCREEN_HEIGHT * 0.24))
-                    )
+                    Rect(0, 0, 300, 90)
                 )
 
                 difficulty_name = ["EASY", "NORMAL", "HARD"][current_selected]
@@ -1117,9 +916,9 @@ while not done:
                 title_explain = ui_variables.h5.render(difficulty_explain, 1, ui_variables.grey_1)
                 title_info = ui_variables.h6.render("Press left and right to change, space to start", 1, ui_variables.grey_1)
 
-                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT*0.1)))
+                screen.blit(title, title.get_rect(center=(SCREEN_WIDTH/2, 45)))
                 screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)))
-                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT*0.77)))
+                screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH/2, 350)))
 
                 # draw left, right sign (triangle)
                 if current_selected > 0:

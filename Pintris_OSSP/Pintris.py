@@ -20,9 +20,8 @@ width = 10 # Board width
 height = 20 # Board height
 framerate = 30 # Bigger -> Slower
 
-
 pygame.init()
-pygame.key.set_repeat(100, 300)
+pygame.key.set_repeat(1000, 5000)
 
 class ui_variables:
     # Fonts

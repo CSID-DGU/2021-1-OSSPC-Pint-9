@@ -112,9 +112,10 @@ def draw_block(x, y, color):
 def draw_block_image(x, y, image):
     draw_image(screen, image, x, y, block_size, block_size)
 
-def draw_reverse_board(next, hold, score, level, goal):
+# Draw game screen
+def draw_board(next, hold, score, level, goal):
     screen.fill(ui_variables.grey_1)
-    sidebar_width = int(SCREEN_WIDTH * 0.5312) #크기 비율 고정, 전체 board 가로길이에서 원하는 비율을 곱해줌
+    sidebar_width = int(SCREEN_WIDTH * 0.5312)
 
     # Draw sidebar
     pygame.draw.rect(
@@ -124,18 +125,18 @@ def draw_reverse_board(next, hold, score, level, goal):
     )
 
     # Draw next mino
-    grid_n = tetrimino.mino_map[next - 1][0] #다음 블록의 원래 모양
+    grid_n = tetrimino.mino_map[next - 1][0]
 
-    for i in range(4): #다음 블록
+    for i in range(4):
         for j in range(4):
             dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
             dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
-            if grid_n[i][j] != 0: #해당 부분에 블록이 있으면
+            if grid_n[i][j] != 0:
                 pygame.draw.rect(
                     screen,
                     ui_variables.t_color[grid_n[i][j]],
                     Rect(dx, dy, block_size, block_size)
-                ) #블록 이미지 출력
+                )
 
     # Draw hold mino
     grid_h = tetrimino.mino_map[hold - 1][0]
@@ -259,34 +260,30 @@ def draw_reverse_board(next, hold, score, level, goal):
             dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix[x][(height-1)-y + 1]])
 
-
-
-# Draw game screen
-def draw_board(next, hold, score, level, goal):
+def draw_1Pboard(next, hold, score, level, goal):
     screen.fill(ui_variables.grey_1)
-    sidebar_width = int(SCREEN_WIDTH * 0.5312)
+    sidebar_width = int(SCREEN_WIDTH * 0.2867) #크기 비율 고정, 전체 board 가로길이에서 원하는 비율을 곱해줌
 
     # Draw sidebar
     pygame.draw.rect(
         screen,
         ui_variables.white,
-        Rect(sidebar_width, 0, int(SCREEN_WIDTH * 0.2375), SCREEN_HEIGHT)
+        Rect(sidebar_width, 0, int(SCREEN_WIDTH * 0.1875), SCREEN_HEIGHT)
     )
 
     # Draw next mino
-    grid_n = tetrimino.mino_map[next - 1][0]
+    grid_n = tetrimino.mino_map[next - 1][0] #다음 블록의 원래 모양
 
-    for i in range(4):
+    for i in range(4): #다음 블록
         for j in range(4):
             dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
             dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
-            if grid_n[i][j] != 0:
+            if grid_n[i][j] != 0: #해당 부분에 블록이 있으면
                 pygame.draw.rect(
                     screen,
                     ui_variables.t_color[grid_n[i][j]],
                     Rect(dx, dy, block_size, block_size)
                 )
-
     # Draw hold mino
     grid_h = tetrimino.mino_map[hold - 1][0]
 
@@ -294,7 +291,7 @@ def draw_board(next, hold, score, level, goal):
         for i in range(4):
             for j in range(4):
                 dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
-                dy = int(SCREEN_HEIGHT * 0.1) + block_size * i
+                dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
                 if grid_h[i][j] != 0:
                     pygame.draw.rect(
                         screen,
@@ -309,32 +306,20 @@ def draw_board(next, hold, score, level, goal):
     # Draw texts
     text_hold = ui_variables.h5.render("HOLD", 1, ui_variables.black)
     text_next = ui_variables.h5.render("NEXT", 1, ui_variables.black)
-    text_score = ui_variables.h5.render("SCORE", 1, ui_variables.black)
+    text_score = ui_variables.h5.render("ATTACK", 1, ui_variables.black)
     score_value = ui_variables.h4.render(str(score), 1, ui_variables.black)
-    text_level = ui_variables.h5.render("LEVEL", 1, ui_variables.black)
-    level_value = ui_variables.h4.render(str(level), 1, ui_variables.black)
-    text_goal = ui_variables.h5.render("GOAL", 1, ui_variables.black)
-    goal_value = ui_variables.h4.render(str(goal), 1, ui_variables.black)
 
     # Place texts
     screen.blit(text_hold, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.0374)))
     screen.blit(text_next, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.2780)))
     screen.blit(text_score, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.5187)))
     screen.blit(score_value, (int(SCREEN_WIDTH  * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.5614)))
-    screen.blit(text_level, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.6791)))
-    screen.blit(level_value, (int(SCREEN_WIDTH  * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.7219)))
-    screen.blit(text_goal, (int(SCREEN_WIDTH  * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.8395)))
-    screen.blit(goal_value, (int(SCREEN_WIDTH  * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.8823)))
 
     # Draw board
-    # 기본 크기에 맞춰 레이아웃이 설정되어 있으므로 조정해준다.
-    width_adjustment = (DEFAULT_WIDTH - width) // 2
-    height_adjustment = (DEFAULT_HEIGHT - height) // 2
-
     for x in range(width):
         for y in range(height):
-            dx = int(SCREEN_WIDTH * 0.25) + block_size * (width_adjustment + x)
-            dy = int(SCREEN_HEIGHT * 0.055) + block_size * (height_adjustment + y)
+            dx = int(SCREEN_WIDTH * 0.055) + block_size * x
+            dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix[x][y + 1]])
 
 def draw_2Pboard(next, hold, score, level, goal):

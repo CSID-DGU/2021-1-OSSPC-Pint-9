@@ -23,7 +23,7 @@ height = DEFAULT_HEIGHT # Board height
 framerate = 30 # Bigger -> Slower
 
 pygame.init()
-pygame.key.set_repeat(1000, 5000)
+pygame.key.set_repeat(200, 200)
 
 class ui_variables:
     # Fonts

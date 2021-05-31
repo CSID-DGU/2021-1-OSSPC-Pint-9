@@ -261,14 +261,13 @@ def draw_reverse_board(next, hold, score, level, goal):
             draw_block(dx, dy, ui_variables.t_color[matrix[x][(height-1)-y + 1]])
 
 def draw_1Pboard(next, hold, score, level, goal):
-    screen.fill(ui_variables.grey_1)
     sidebar_width = int(SCREEN_WIDTH * 0.2867) #크기 비율 고정, 전체 board 가로길이에서 원하는 비율을 곱해줌
 
     # Draw sidebar
     pygame.draw.rect(
         screen,
         ui_variables.white,
-        Rect(sidebar_width, 0, int(SCREEN_WIDTH * 0.1875), SCREEN_HEIGHT)
+        Rect(384, 0, int(SCREEN_WIDTH * 0.1875), SCREEN_HEIGHT)
     )
 
     # Draw next mino
@@ -276,8 +275,8 @@ def draw_1Pboard(next, hold, score, level, goal):
 
     for i in range(4): #다음 블록
         for j in range(4):
-            dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
-            dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
+            dx = 415 + block_size * j
+            dy = 220 + block_size * i
             if grid_n[i][j] != 0: #해당 부분에 블록이 있으면
                 pygame.draw.rect(
                     screen,
@@ -290,8 +289,8 @@ def draw_1Pboard(next, hold, score, level, goal):
     if hold_mino != -1:
         for i in range(4):
             for j in range(4):
-                dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
-                dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
+                dx = 415 + sidebar_width + block_size * j
+                dy = 60 + block_size * i
                 if grid_h[i][j] != 0:
                     pygame.draw.rect(
                         screen,
@@ -318,19 +317,18 @@ def draw_1Pboard(next, hold, score, level, goal):
     # Draw board
     for x in range(width):
         for y in range(height):
-            dx = int(SCREEN_WIDTH * 0.055) + block_size * x
-            dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
+            dx = 17 + block_size * x
+            dy = 17 + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix[x][y + 1]])
 
 def draw_2Pboard(next, hold, score, level, goal):
-    screen.fill(ui_variables.grey_1)
     sidebar_width = int(SCREEN_WIDTH * 0.7867) #크기 비율 고정, 전체 board 가로길이에서 원하는 비율을 곱해줌
 
     # Draw sidebar
     pygame.draw.rect(
         screen,
         ui_variables.white,
-        Rect(sidebar_width, 0, int(SCREEN_WIDTH * 0.2375), SCREEN_HEIGHT)
+        Rect(948, 0, int(SCREEN_WIDTH * 0.2375), SCREEN_HEIGHT)
     )
 
     # Draw next mino
@@ -338,8 +336,8 @@ def draw_2Pboard(next, hold, score, level, goal):
 
     for i in range(4): #다음 블록
         for j in range(4):
-            dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
-            dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
+            dx = 979 + block_size * j
+            dy = 220 + block_size * i
             if grid_n[i][j] != 0: #해당 부분에 블록이 있으면
                 pygame.draw.rect(
                     screen,
@@ -353,8 +351,8 @@ def draw_2Pboard(next, hold, score, level, goal):
     if hold_mino_2P != -1:
         for i in range(4):
             for j in range(4):
-                dx = int(SCREEN_WIDTH * 0.025) + sidebar_width + block_size * j
-                dy = int(SCREEN_HEIGHT * 0.3743) + block_size * i
+                dx = 979 + block_size * j
+                dy = 60 + block_size * i
                 if grid_h[i][j] != 0:
                     pygame.draw.rect(
                         screen,
@@ -389,8 +387,8 @@ def draw_2Pboard(next, hold, score, level, goal):
     # Draw board
     for x in range(width):
         for y in range(height):
-            dx = int(SCREEN_WIDTH * 0.5) + block_size * x
-            dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
+            dx = 581 + block_size * x
+            dy = 17 + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix_2P[x][y + 1]])
 
 def draw_multiboard(next_1P, hold_1P, next_2P, hold_2P, score, level, goal):

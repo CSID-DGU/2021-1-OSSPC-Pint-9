@@ -1887,14 +1887,37 @@ while not done:
                              int(SCREEN_HEIGHT * 0.24))
                     )
                 )
-
+                
                 title = ui_variables.h1.render("HELP", 1, ui_variables.white)
-                title_explain = ui_variables.h5.render("Help page", 1, ui_variables.grey_1)
                 title_info = ui_variables.h6.render("Press esc to return menu", 1, ui_variables.grey_1)
 
                 screen.blit(title, title.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1)))
-                screen.blit(title_explain, title_explain.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)))
                 screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
+
+                font2 = pygame.font.Font('assets/fonts/NanumGothicCoding-Bold.ttf', 15)
+                title_2 = font2.render("조작법", 1, ui_variables.grey_1)
+                screen.blit(title_2, title_2.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 5 / 16)))
+
+                help_text = [
+                    (0, "빠른이동", "← → 홀드"),
+                    (1, "블록 홀드", "SHIFT"),
+                    (2, "블록 변형", "↑, CONTROL"),
+                    (3, "하드 드롭", "SPACE"),
+                    (4, "소프트 드롭", "↓"),
+                    (5, "일시정지", "ESC")
+                ]
+
+                for h, left, right in help_text:
+                    text_left = font2.render(left, 1, ui_variables.grey_1)
+                    text_right = font2.render(right, 1, ui_variables.grey_1)
+
+                    height = SCREEN_HEIGHT * (h + 6) / 16
+                    left_pos = SCREEN_WIDTH * 4 / 10
+                    right_pos = SCREEN_WIDTH * 6 / 10
+
+                    screen.blit(text_left, text_left.get_rect(center=(left_pos, height)))
+                    screen.blit(text_right, text_right.get_rect(center=(right_pos, height)))
+
 
             # Setting Page
             elif page == SETTING_PAGE:

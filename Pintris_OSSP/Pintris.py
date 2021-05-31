@@ -1887,7 +1887,7 @@ while not done:
                              int(SCREEN_HEIGHT * 0.24))
                     )
                 )
-
+                
                 title = ui_variables.h1.render("HELP", 1, ui_variables.white)
                 title_info = ui_variables.h6.render("Press esc to return menu", 1, ui_variables.grey_1)
 
@@ -1917,6 +1917,7 @@ while not done:
 
                     screen.blit(text_left, text_left.get_rect(center=(left_pos, height)))
                     screen.blit(text_right, text_right.get_rect(center=(right_pos, height)))
+
 
             # Setting Page
             elif page == SETTING_PAGE:

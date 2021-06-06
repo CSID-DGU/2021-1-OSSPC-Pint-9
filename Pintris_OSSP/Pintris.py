@@ -30,10 +30,7 @@ mino_turn = 4
 framerate = 30  # Bigger -> Slower
 
 pygame.init()
-
-
-# pygame.key.set_repeat(200, 200)
-
+pygame.key.set_repeat(500)
 
 class ui_variables:
     # Fonts
@@ -67,7 +64,7 @@ class ui_variables:
     fever_image = pygame.image.load("assets/images/fever.png")
     pvp_win_image = pygame.image.load("assets/images/win.png")
     pvp_lose_image = pygame.image.load("assets/images/lose.png")
-    pvp_blind_image = pygame.image.load("assets/images/blind.png")
+    pvp_annoying_image = pygame.image.load("assets/images/annoying.png")
 
     # Background colors
     black = (10, 10, 10)  # rgb(10, 10, 10)
@@ -75,7 +72,6 @@ class ui_variables:
     grey_1 = (26, 26, 26)  # rgb(26, 26, 26)
     grey_2 = (35, 35, 35)  # rgb(35, 35, 35)
     grey_3 = (55, 55, 55)  # rgb(55, 55, 55)
-    grey_4 = (99, 99, 99)
     # Tetrimino colors
     cyan = (69, 206, 204)  # rgb(69, 206, 204) # I
     blue = (64, 111, 249)  # rgb(64, 111, 249) # J
@@ -85,7 +81,7 @@ class ui_variables:
     pink = (242, 64, 235)  # rgb(242, 64, 235) # T
     red = (225, 13, 27)  # rgb(225, 13, 27) # Z
 
-    t_color = [grey_2, cyan, blue, orange, yellow, green, pink, red, grey_3, grey_4]
+    t_color = [grey_2, cyan, blue, orange, yellow, green, pink, red, grey_3]
 
 
 # 소리 크기 설정
@@ -271,7 +267,7 @@ def draw_reverse_board(next, hold, score, level, goal):
 
 
 def draw_1Pboard(next, hold):
-    sidebar_width = int(SCREEN_WIDTH * 0.2867)  # 크기 비율 고정, 전체 board 가로길이에서 원하는 비율을 곱해줌
+    sidebar_width = int(SCREEN_WIDTH * 0.3112)  # 크기 비율 고정, 전체 board 가로길이에서 원하는 비율을 곱해줌
 
     # Draw sidebar
     pygame.draw.rect(
@@ -315,6 +311,7 @@ def draw_1Pboard(next, hold):
     score_value = ui_variables.h4.render(str(score), 1, ui_variables.black)
     text_at = ui_variables.h5.render("ATTACK", 1, ui_variables.black)
     at_value = ui_variables.h4.render(str(attack_point), 1, ui_variables.black)
+    text_player = ui_variables.h5.render("1Player", 1, ui_variables.black)
 
     # Place texts
     screen.blit(text_hold, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.0374)))
@@ -323,11 +320,12 @@ def draw_1Pboard(next, hold):
     screen.blit(score_value, (int(SCREEN_WIDTH * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.5614)))
     screen.blit(text_at, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.6791)))
     screen.blit(at_value, (int(SCREEN_WIDTH * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.7219)))
+    screen.blit(text_player, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.8815)))
 
     # Draw board
     for x in range(width):
         for y in range(height):
-            dx = int(SCREEN_WIDTH * 0.055) + block_size * x
+            dx = int(SCREEN_WIDTH * 0.05) + block_size * x
             dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix[x][y + 1]])
 
@@ -378,6 +376,7 @@ def draw_2Pboard(next, hold):
     score_value = ui_variables.h4.render(str(score_2P), 1, ui_variables.black)
     text_at = ui_variables.h5.render("ATTACK", 1, ui_variables.black)
     at_value = ui_variables.h4.render(str(attack_point_2P), 1, ui_variables.black)
+    text_player = ui_variables.h5.render("2Player", 1, ui_variables.black)
 
     # Place texts
     screen.blit(text_hold, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.0374)))
@@ -386,11 +385,12 @@ def draw_2Pboard(next, hold):
     screen.blit(score_value, (int(SCREEN_WIDTH * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.5614)))
     screen.blit(text_at, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.6791)))
     screen.blit(at_value, (int(SCREEN_WIDTH * 0.055) + sidebar_width, int(SCREEN_HEIGHT * 0.7219)))
+    screen.blit(text_player, (int(SCREEN_WIDTH * 0.045) + sidebar_width, int(SCREEN_HEIGHT * 0.8815)))
 
     # Draw board
     for x in range(width):
         for y in range(height):
-            dx = int(SCREEN_WIDTH * 0.5) + block_size * x
+            dx = int(SCREEN_WIDTH * 0.53) + block_size * x
             dy = int(SCREEN_HEIGHT * 0.055) + block_size * y
             draw_block(dx, dy, ui_variables.t_color[matrix_2P[x][y + 1]])
 
@@ -892,7 +892,6 @@ while not done:
                             hold = False
                         else:
                             start = False
-
                             game_over = True
                             if reverse:
                                 reverse = False
@@ -938,7 +937,7 @@ while not done:
                                                        (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
                                 (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
                     pygame.display.update()
-                    pygame.time.delay(300)
+                    pygame.time.delay(250)
                     for j in range(height):
                         for i in range(width):
                             matrix[i][j] = matrix[i][j + 1]  # 기존있던블럭들 한칸증가
@@ -970,6 +969,7 @@ while not done:
                     pause = True
                 # Hard drop
                 elif event.key == K_SPACE:
+                    pygame.key.set_repeat(0)
                     ui_variables.drop_sound.play()
                     while not is_bottom(dx, dy, mino, rotation):
                         dy += 1
@@ -982,6 +982,7 @@ while not done:
                         draw_board(next_mino, hold_mino, score, level, goal)
                 # Hold
                 elif event.key == K_LSHIFT or event.key == K_c:
+                    pygame.key.set_repeat(0)
                     if hold == False:
                         ui_variables.move_sound.play()
                         if hold_mino == -1:
@@ -1000,6 +1001,7 @@ while not done:
                         draw_board(next_mino, hold_mino, score, level, goal)
                 # Turn right
                 elif event.key == K_UP or event.key == K_x:
+                    pygame.key.set_repeat(0)
                     if is_turnable_r(dx, dy, mino, rotation):
                         ui_variables.move_sound.play()
                         rotation += 1
@@ -1037,6 +1039,7 @@ while not done:
                         draw_board(next_mino, hold_mino, score, level, goal)
                 # Turn left
                 elif event.key == K_z or event.key == K_LCTRL:
+                    pygame.key.set_repeat(0)
                     if is_turnable_l(dx, dy, mino, rotation):
                         ui_variables.move_sound.play()
                         rotation -= 1
@@ -1072,8 +1075,9 @@ while not done:
                     else:
                         draw_board(next_mino, hold_mino, score, level, goal)
 
-                # 왼쪽이동, 리버스모드에선 방향키 반대
+                # 왼쪽 이동, 리버스모드에선 방향키 반대
                 elif event.key == K_LEFT:
+                    pygame.key.set_repeat(50)
                     if reverse:
                         if not is_rightedge(dx, dy, mino, rotation):
                             ui_variables.move_sound.play()
@@ -1086,11 +1090,10 @@ while not done:
                             dx -= 1
                         draw_mino(dx, dy, mino, rotation)
                         draw_board(next_mino, hold_mino, score, level, goal)
-
-
 
                 # 오른쪽 이동, 리버스모드에선 방향키 반대
                 elif event.key == K_RIGHT:
+                    pygame.key.set_repeat(50)
                     if reverse:
                         if not is_leftedge(dx, dy, mino, rotation):
                             ui_variables.move_sound.play()
@@ -1104,28 +1107,28 @@ while not done:
                         draw_mino(dx, dy, mino, rotation)
                         draw_board(next_mino, hold_mino, score, level, goal)
 
+            elif event.type == KEYUP:
+                pygame.key.set_repeat(300)
 
             elif event.type == VIDEORESIZE:
                 SCREEN_WIDTH = event.w
                 SCREEN_HEIGHT = event.h
                 block_size = int(SCREEN_HEIGHT * 0.045)
 
+
         pygame.display.update()
 
 
-
     elif pvp:
+        pygame.key.set_repeat(0) # 키반복 비활성화
         for event in pygame.event.get():
             if event.type == QUIT:
                 done = True
             elif event.type == USEREVENT:
                 # Set speed
                 if not pvp_over:
-                    keys_pressed = pygame.key.get_pressed()
-                    if keys_pressed[K_DOWN]:
-                        pygame.time.set_timer(pygame.USEREVENT, framerate * 1)
-                    else:
-                        pygame.time.set_timer(pygame.USEREVENT, framerate * 10)
+                    pygame.time.set_timer(pygame.USEREVENT, framerate * 10)
+
                 # Draw a mino
                 draw_mino(dx, dy, mino, rotation)
                 draw_mino_2P(dx_2P, dy_2P, mino_2P, rotation_2P)
@@ -1223,27 +1226,26 @@ while not done:
                                 matrix_2P[i][k] = matrix_2P[i][k - 1]
                             k -= 1
 
-                # 공격 - 상대방에게 1줄 블록 생성
-                while attack_stack >= 2:
+                # 공격 - 한 플레이어가 두줄 지우면 상대방에게 1줄 방해블록 생성
+                if attack_stack >= 2:
+                    attack_stack -= 2
                     for j in range(height):
                         for i in range(width):
                             matrix_2P[i][j] = matrix_2P[i][j + 1]
-                            attack_stack -= 2
                     for i in range(width):
                         matrix_2P[i][height] = 9
-                    k = randint(1, 10)
+                    k = randint(1, 9)
                     matrix_2P[k][height] = 0
                     attack_point += 1
 
-                while attack_stack_2P >= 2:
+                if attack_stack_2P >= 2:
+                    attack_stack_2P -= 2
                     for j in range(height):
                         for i in range(width):
                             matrix[i][j] = matrix[i][j + 1]
-
-                            attack_stack_2P -= 2
                     for i in range(width):
                         matrix[i][height] = 9
-                    k = randint(1, 10)
+                    k = randint(1, 9)
                     matrix[k][height] = 0
                     attack_point_2P += 1
 
@@ -1288,24 +1290,31 @@ while not done:
                     level_2P += 1
                     goal_2P += level_2P * 2
 
-                '''
-                # 방해 - 상대방에게 일정시간 이미지 출력
-                if attack_point == 1:
-                    t_end = time.time() + 5  # 5초 동안
-                    while time.time() < t_end:
-                        screen.blit(pygame.transform.scale(ui_variables.pvp_blind_image,
-                                (int(SCREEN_WIDTH * 0.2), int(SCREEN_HEIGHT * 0.4))),
-                                (int(SCREEN_WIDTH * 0.5), int(SCREEN_HEIGHT * 0.3)))  # 방해 이미지 출력
-                        pygame.display.update()
+                # 상대방 시야 방해
+                # fever_score, fever_interval 값을 이용하여 나타냄
+                attack_interval = fever_interval  # attack_interval = 3
+                attack_score = fever_score        # attack_score = 500
 
-                if attack_point_2P == 1:
-                    t_end = time.time() + 5  # 5초 동안
-                    while time.time() < t_end:
-                        screen.blit(pygame.transform.scale(ui_variables.pvp_blind_image,
-                                (int(SCREEN_WIDTH * 0.2), int(SCREEN_HEIGHT * 0.4))),
-                                (int(SCREEN_WIDTH * 0.05), int(SCREEN_HEIGHT * 0.3)))  # 방해 이미지 출력
-                        pygame.display.update()
-                '''
+                #1P
+                for i in range(2, 99, attack_interval):
+                    if score > i * attack_score and score < (i * attack_score + 300):  # 1000~1300,2500~2800,4000~4300
+                        if blink:
+                            screen.blit(pygame.transform.scale(ui_variables.pvp_annoying_image,
+                                        (int(SCREEN_WIDTH * 0.4), int(SCREEN_HEIGHT * 0.9))),
+                                        (SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0))  # 이미지 깜빡거리게
+                            blink = False
+                        else:
+                            blink = True
+                #2P
+                for j in range(2, 99, attack_interval):
+                    if score_2P > j * attack_score and score_2P < (j * attack_score + 300):  # 1000~1300,2500~2800,4000~4300
+                        if blink:
+                            screen.blit(pygame.transform.scale(ui_variables.pvp_annoying_image,
+                                        (int(SCREEN_WIDTH * 0.4), int(SCREEN_HEIGHT * 0.9))),
+                                        (SCREEN_WIDTH * 0, SCREEN_HEIGHT * 0))  # 이미지 깜빡거리게
+                            blink = False
+                        else:
+                            blink = True
 
                 # Increase difficulty
                 if erase_count >= 3 or erase_count_2P >= 3:
@@ -1554,6 +1563,7 @@ while not done:
                     draw_mino(dx, dy, mino, rotation)
                     draw_mino_2P(dx_2P, dy_2P, mino_2P, rotation_2P)
                     draw_multiboard(next_mino, hold_mino, next_mino_2P, hold_mino_2P)
+
             elif event.type == VIDEORESIZE:
                 SCREEN_WIDTH = event.w
                 SCREEN_HEIGHT = event.h
@@ -1613,6 +1623,7 @@ while not done:
                 pygame.display.update()
             elif event.type == KEYDOWN:
                 if event.key == K_RETURN:
+                    pygame.key.set_repeat(0)
                     ui_variables.click_sound.play()
 
                     outfile = open('leaderboard.txt', 'a')
@@ -1671,20 +1682,22 @@ while not done:
                         leaders[i.split(' ')[0]] = int(i.split(' ')[1])
                     leaders = sorted(leaders.items(), key=operator.itemgetter(1), reverse=True)
 
-                    pygame.time.set_timer(pygame.USEREVENT, 1)
                 elif event.key == K_RIGHT:
+                    pygame.key.set_repeat(0)
                     if name_location != 2:
                         name_location += 1
                     else:
                         name_location = 0
                     pygame.time.set_timer(pygame.USEREVENT, 1)
                 elif event.key == K_LEFT:
+                    pygame.key.set_repeat(0)
                     if name_location != 0:
                         name_location -= 1
                     else:
                         name_location = 2
                     pygame.time.set_timer(pygame.USEREVENT, 1)
                 elif event.key == K_UP:
+                    pygame.key.set_repeat(0)
                     ui_variables.click_sound.play()
                     if name[name_location] != 90:
                         name[name_location] += 1
@@ -1692,6 +1705,7 @@ while not done:
                         name[name_location] = 65
                     pygame.time.set_timer(pygame.USEREVENT, 1)
                 elif event.key == K_DOWN:
+                    pygame.key.set_repeat(0)
                     ui_variables.click_sound.play()
                     if name[name_location] != 65:
                         name[name_location] -= 1
@@ -1789,8 +1803,6 @@ while not done:
                     pvp_over = False
                     player = 0
 
-                    pygame.time.set_timer(pygame.USEREVENT, 1)
-
 
     # Start screen
     else:
@@ -1814,6 +1826,7 @@ while not done:
                         done = True
                     elif event.type == KEYDOWN:
                         if event.key == K_SPACE:
+                            pygame.key.set_repeat(0)
                             # goto menu page
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
@@ -1862,20 +1875,24 @@ while not done:
                         done = True
                     elif event.type == KEYDOWN:
                         if event.key == K_ESCAPE:
+                            pygame.key.set_repeat(0)
                             # back to start page
                             ui_variables.click_sound.play()
                             page, selected = START_PAGE, 0
                         elif event.key == K_DOWN:
+                            pygame.key.set_repeat(0)
                             if selected == 0 or selected == 1:
                                 # next menu select
                                 ui_variables.click_sound.play()
                                 selected = selected + 1
                         elif event.key == K_UP:
+                            pygame.key.set_repeat(0)
                             if selected == 1 or selected == 2:
                                 # previous menu select
                                 ui_variables.click_sound.play()
                                 selected = selected - 1
                         elif event.key == K_SPACE:
+                            pygame.key.set_repeat(0)
                             if selected == 0:
                                 # select start menu, goto difficulty select page
                                 ui_variables.click_sound.play()
@@ -1944,6 +1961,7 @@ while not done:
                     elif event.type == KEYDOWN:
                         # back to menu page
                         if event.key == K_ESCAPE:
+                            pygame.key.set_repeat(0)
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
                     # 마우스로 창크기조절
@@ -2004,20 +2022,24 @@ while not done:
                         done = True
                     elif event.type == KEYDOWN:
                         if event.key == K_ESCAPE:
+                            pygame.key.set_repeat(0)
                             # back to start page
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
                         elif event.key == K_DOWN:
+                            pygame.key.set_repeat(0)
                             if selected == 0 or selected == 1 or selected == 2:
                                 # next menu select
                                 ui_variables.click_sound.play()
                                 selected = selected + 1
                         elif event.key == K_UP:
+                            pygame.key.set_repeat(0)
                             if selected == 1 or selected == 2 or selected == 3:
                                 # previous menu select
                                 ui_variables.click_sound.play()
                                 selected = selected - 1
                         elif event.key == K_SPACE:
+                            pygame.key.set_repeat(0)
                             if selected == 0:
                                 # 미니 사이즈
                                 ui_variables.click_sound.play()
@@ -2043,6 +2065,7 @@ while not done:
                                 pygame.display.update()
                                 # page = SETTING_PAGE
                         elif event.key == K_LEFT:
+                            pygame.key.set_repeat(0)
                             if selected == 3:
                                 ui_variables.click_sound.play()
                                 if effect_volume <= 0:
@@ -2051,6 +2074,7 @@ while not done:
                                     effect_volume -= 1
 
                         elif event.key == K_RIGHT:
+                            pygame.key.set_repeat(0)
                             if selected == 3:
                                 ui_variables.click_sound.play()
                                 if effect_volume >= 10:
@@ -2159,20 +2183,24 @@ while not done:
                         done = True
                     elif event.type == KEYDOWN:
                         if event.key == K_ESCAPE:
+                            pygame.key.set_repeat(0)
                             # back to menu page
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
                         elif event.key == K_RIGHT:
+                            pygame.key.set_repeat(0)
                             if selected < DIFFICULTY_COUNT - 1:
                                 # next difficulty select
                                 ui_variables.click_sound.play()
                                 selected = selected + 1
                         elif event.key == K_LEFT:
+                            pygame.key.set_repeat(0)
                             if selected > 0:
                                 # previous difficulty select
                                 ui_variables.click_sound.play()
                                 selected = selected - 1
                         if event.key == K_SPACE:
+                            pygame.key.set_repeat(0)
                             if 0 <= selected < 3:
                                 # start game with selected difficulty
                                 ui_variables.click_sound.play()

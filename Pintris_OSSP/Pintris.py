@@ -1,10 +1,8 @@
 import pygame
 import operator
 import math
-import time
 from random import *
 from pygame.locals import *
-
 from mino import *
 
 # test
@@ -693,8 +691,6 @@ fever_score = 500
 next_fever = 500
 fever_interval = 3
 
-current_time = pygame.time.get_ticks()
-
 # 난이도
 easy_difficulty = 0
 normal_difficulty = 1
@@ -722,6 +718,10 @@ hold_mino = -1  # Holded mino
 hold_mino_2P = -1
 
 player = 0
+attack_stack = 0
+attack_stack_2P = 0
+erase_stack = 0
+erase_stack_2P = 0
 
 name_location = 0
 name = [65, 65, 65]
@@ -738,7 +738,6 @@ leaders = sorted(leaders.items(), key=operator.itemgetter(1), reverse=True)
 matrix = [[0 for y in range(height + 1)] for x in range(width)]  # Board matrix
 matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
 
-
 # 초기화 부분을 하나로 합쳐준다.
 def init_game(board_width, board_height, game_difficulty):
     global width, height, matrix, matrix_2P, difficulty, framerate
@@ -751,7 +750,6 @@ def init_game(board_width, board_height, game_difficulty):
 
     difficulty = game_difficulty
     framerate = STARTING_FRAMERATE_BY_DIFFCULTY[difficulty]
-
 
 ###########################################################
 # Loop Start
@@ -795,7 +793,6 @@ while not done:
                     width = DEFAULT_WIDTH
                     height = DEFAULT_HEIGHT
                     ui_variables.click_sound.play()
-                    pygame.time.set_timer(pygame.USEREVENT, 1)
                     dx, dy = 3, 0
                     rotation = 0
                     mino = randint(1, 7)
@@ -834,13 +831,16 @@ while not done:
                     goal_2P = level_2P * 2
                     matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
                     player = 0
+                    attack_stack = 0
+                    attack_stack_2P = 0
+                    erase_stack = 0
+                    erase_stack_2P = 0
 
                     if pvp:
                         pvp = False
 
                     if reverse:
                         reverse = False
-
 
             elif event.type == VIDEORESIZE:
                 SCREEN_WIDTH = event.w
@@ -1120,7 +1120,6 @@ while not done:
                 SCREEN_HEIGHT = event.h
                 block_size = int(SCREEN_HEIGHT * 0.045)
 
-
         pygame.display.update()
 
 
@@ -1200,8 +1199,6 @@ while not done:
                 # Erase line
                 erase_count = 0
                 erase_count_2P = 0
-                attack_stack = 0
-                attack_stack_2P = 0
 
                 for j in range(height + 1):
                     is_full = True
@@ -1211,6 +1208,7 @@ while not done:
                     if is_full:
                         erase_count += 1
                         attack_stack += 1
+                        erase_stack += 1
                         k = j
                         while k > 0:
                             for i in range(width):
@@ -1225,6 +1223,7 @@ while not done:
                     if is_full:
                         erase_count_2P += 1
                         attack_stack_2P += 1
+                        erase_stack_2P += 1
                         k = j
                         while k > 0:
                             for i in range(width):
@@ -1289,11 +1288,9 @@ while not done:
                     level += 1
                     goal += level * 2
 
-                goal_2P -= erase_count_2P
                 if goal_2P < 1 and level_2P < 15:
                     level_2P += 1
                     goal_2P += level_2P * 2
-
 
                 # 상대방 시야 방해
                 # fever_score, fever_interval 값을 이용하여 나타냄
@@ -1322,22 +1319,34 @@ while not done:
                             blink = True
 
                 # Increase difficulty
-                for i in range(1, 99):
-                    if erase_count >= erase_count_2P and erase_count == 3 * i:
-                        framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
-                        screen.blit(pygame.transform.scale(ui_variables.levelup,
-                                                           (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
-                                    (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
-                        pygame.display.update()
-                        pygame.time.delay(300)
+                if erase_stack >= 3 and erase_stack_2P >= 3:
+                    erase_stack = 0
+                    erase_stack_2P = 0
+                    framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
+                    screen.blit(pygame.transform.scale(ui_variables.levelup,
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
+                    pygame.display.update()
+                    pygame.time.delay(300)
+                elif erase_stack > erase_stack_2P and erase_stack >= 3:
+                    erase_stack = 0
+                    erase_stack_2P = 0
+                    framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
+                    screen.blit(pygame.transform.scale(ui_variables.levelup,
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
+                    pygame.display.update()
+                    pygame.time.delay(300)
+                elif erase_stack < erase_stack_2P and erase_stack_2P >= 3:
+                    erase_stack = 0
+                    erase_stack_2P = 0
+                    framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
+                    screen.blit(pygame.transform.scale(ui_variables.levelup,
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
+                    pygame.display.update()
+                    pygame.time.delay(300)
 
-                    elif erase_count < erase_count_2P and erase_count_2P == 3 * i:
-                        framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
-                        screen.blit(pygame.transform.scale(ui_variables.levelup,
-                                                           (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
-                                    (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
-                        pygame.display.update()
-                        pygame.time.delay(300)
 
             elif event.type == KEYDOWN:
                 erase_mino(dx, dy, mino, rotation)
@@ -1685,6 +1694,10 @@ while not done:
                     matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
                     pvp_over = False
                     player = 0
+                    attack_stack = 0
+                    attack_stack_2P = 0
+                    erase_stack = 0
+                    erase_stack_2P = 0
 
                     with open('leaderboard.txt') as f:
                         lines = f.readlines()
@@ -1818,6 +1831,10 @@ while not done:
                     matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
                     pvp_over = False
                     player = 0
+                    attack_stack = 0
+                    attack_stack_2P = 0
+                    erase_stack = 0
+                    erase_stack_2P = 0
 
 
     # Start screen

@@ -72,6 +72,7 @@ class ui_variables:
     grey_1 = (26, 26, 26)  # rgb(26, 26, 26)
     grey_2 = (35, 35, 35)  # rgb(35, 35, 35)
     grey_3 = (55, 55, 55)  # rgb(55, 55, 55)
+    grey_4 = (100,100,100)
     # Tetrimino colors
     cyan = (69, 206, 204)  # rgb(69, 206, 204) # I
     blue = (64, 111, 249)  # rgb(64, 111, 249) # J
@@ -81,7 +82,7 @@ class ui_variables:
     pink = (242, 64, 235)  # rgb(242, 64, 235) # T
     red = (225, 13, 27)  # rgb(225, 13, 27) # Z
 
-    t_color = [grey_2, cyan, blue, orange, yellow, green, pink, red, grey_3]
+    t_color = [grey_2, cyan, blue, orange, yellow, green, pink, red, grey_3, grey_4]
 
 
 # 소리 크기 설정
@@ -676,8 +677,10 @@ pvp_over = False
 score = 0
 score_2P = 0
 level = 1
+level_2P = 1
 difficulty = 0
 goal = level * 2
+goal_2P = level_2P * 2
 bottom_count = 0
 bottom_count_2P = 0
 hard_drop = False
@@ -827,6 +830,8 @@ while not done:
                     attack_point = 0
                     attack_point_2P = 0
                     score_2P = 0
+                    level_2P = 1
+                    goal_2P = level_2P * 2
                     matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
                     player = 0
 
@@ -1278,9 +1283,8 @@ while not done:
                     score_2P += 500 * level_2P
 
                 # Increase level
-                goal_2P = 0
-                level_2P = 1
                 goal -= erase_count
+                goal_2P -= erase_count_2P
                 if goal < 1 and level < 15:
                     level += 1
                     goal += level * 2
@@ -1289,6 +1293,7 @@ while not done:
                 if goal_2P < 1 and level_2P < 15:
                     level_2P += 1
                     goal_2P += level_2P * 2
+
 
                 # 상대방 시야 방해
                 # fever_score, fever_interval 값을 이용하여 나타냄
@@ -1317,16 +1322,22 @@ while not done:
                             blink = True
 
                 # Increase difficulty
-                if erase_count >= 3 or erase_count_2P >= 3:
-                    erase_count = 0
-                    erase_count_2P = 0
-                    framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
-                    screen.blit(pygame.transform.scale(ui_variables.levelup,
-                                                       (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
-                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
-                    pygame.display.update()
-                    pygame.time.delay(300)
+                for i in range(1, 99):
+                    if erase_count >= erase_count_2P and erase_count == 3 * i:
+                        framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
+                        screen.blit(pygame.transform.scale(ui_variables.levelup,
+                                                           (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                    (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
+                        pygame.display.update()
+                        pygame.time.delay(300)
 
+                    elif erase_count < erase_count_2P and erase_count_2P == 3 * i:
+                        framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
+                        screen.blit(pygame.transform.scale(ui_variables.levelup,
+                                                           (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                    (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
+                        pygame.display.update()
+                        pygame.time.delay(300)
 
             elif event.type == KEYDOWN:
                 erase_mino(dx, dy, mino, rotation)
@@ -1669,6 +1680,8 @@ while not done:
                     attack_point = 0
                     attack_point_2P = 0
                     score_2P = 0
+                    level_2P = 1
+                    goal_2P = level_2P * 5
                     matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
                     pvp_over = False
                     player = 0
@@ -1730,22 +1743,23 @@ while not done:
                 screen.blit(over_text_2, (SCREEN_WIDTH * 0.0775, SCREEN_HEIGHT * 0.233))
                 screen.blit(over_start, (SCREEN_WIDTH * 0.033 , SCREEN_HEIGHT * 0.3333))
 
+                # win-lose 이미지 출력
                 if player == 1:
                     screen.blit(pygame.transform.scale(ui_variables.pvp_win_image,
                                                        (
-                                                           int(SCREEN_WIDTH * 0.2), int(SCREEN_HEIGHT * 0.5))),
+                                                           int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.6))),
                                 (int(SCREEN_WIDTH * 0.08), int(SCREEN_HEIGHT * 0.3)))
                     screen.blit(pygame.transform.scale(ui_variables.pvp_lose_image,
                                                        (
-                                                           int(SCREEN_WIDTH * 0.2), int(SCREEN_HEIGHT * 0.5))),
-                                (int(SCREEN_WIDTH * 0.5), int(SCREEN_HEIGHT * 0.3)))
+                                                           int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.6))),
+                                (int(SCREEN_WIDTH * 0.55), int(SCREEN_HEIGHT * 0.3)))
                 elif player == 2:
                     screen.blit(pygame.transform.scale(ui_variables.pvp_lose_image,
-                                                       (int(SCREEN_WIDTH * 0.2), int(SCREEN_HEIGHT * 0.5))),
+                                                       (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.6))),
                                 (int(SCREEN_WIDTH * 0.08), int(SCREEN_HEIGHT * 0.3)))
                     screen.blit(pygame.transform.scale(ui_variables.pvp_win_image,
-                                                       (int(SCREEN_WIDTH * 0.2), int(SCREEN_HEIGHT * 0.5))),
-                                (int(SCREEN_WIDTH * 0.5), int(SCREEN_HEIGHT * 0.3)))
+                                                       (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.6))),
+                                (int(SCREEN_WIDTH * 0.55), int(SCREEN_HEIGHT * 0.3)))
                 pygame.display.update()
 
             # 마우스로 창크기조절
@@ -1799,6 +1813,8 @@ while not done:
                     attack_point = 0
                     attack_point_2P = 0
                     score_2P = 0
+                    level_2P = 1
+                    goal_2P = level_2P * 5
                     matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
                     pvp_over = False
                     player = 0
@@ -2220,7 +2236,7 @@ while not done:
                                 start = True
                                 init_game(width, int(height / 2), normal_difficulty)
 
-                                # Reverse mode , 실행시 아직은 미니모드가 나옵니다.
+                                # Reverse mode page
                             if selected == 5:
                                 ui_variables.click_sound.play()
                                 start = True

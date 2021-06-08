@@ -2023,15 +2023,15 @@ while not done:
                 screen.blit(title_info, title_info.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.77)))
 
                 font2 = pygame.font.Font('assets/fonts/NanumGothicCoding-Bold.ttf', 15)
-                title_2 = font2.render("조작법", 1, ui_variables.grey_1)
+                title_2 = font2.render("Key help", 1, ui_variables.grey_1)
                 screen.blit(title_2, title_2.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 5 / 16)))
 
                 help_text = [
-                    (0, "빠른이동", "← → 홀드"),
-                    (1, "블록 홀드", "SHIFT"),
-                    (2, "블록 변형", "↑, CONTROL"),
-                    (3, "하드 드롭", "SPACE"),
-                    (4, "소프트 드롭", "↓"),
+                    (0, "   ", "1p      2p"),
+                    (1, "조작법", "WASD    방향키"),
+                    (2, "블록 홀드", "Lshift    Rshift"),
+                    (3, "블록 변형", "CONTROL"),
+                    (4, "하드 드롭", "E    SPACE"),
                     (5, "일시정지", "ESC")
                 ]
 
@@ -2202,12 +2202,12 @@ while not done:
                 DIFFICULTY_COUNT = 6
                 DIFFICULTY_NAMES = ["EASY", "NORMAL", "HARD", "PvP", "SPEED & MINI", "REVERSE"]
                 DIFFICULTY_EXPLAINES = [
-                    "Easy mode",
-                    "Normal mode",
-                    "Hard mode",
-                    "PvP mode",
-                    "SPEED & Mini mode",
-                    "Reverse mode"
+                    "블록이 천천히 내려오는 이지모드 입니다.",
+                    "블록이 중간 속도로 내려오는 노말모드 입니다.",
+                    "블록이 빠르게 내려오는 하드모드 입니다.",
+                    "1P 2P 로 플레이 할 수 있는 PvP모드 입니다.",
+                    "보드 크기가 줄어든 스피드&미니모드 입니다.",
+                    "방향키와 블록 등장이 반대인 리버스모드 입니다."
                 ]
 
                 current_selected = selected

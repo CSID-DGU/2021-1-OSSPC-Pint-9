@@ -5,8 +5,6 @@ from random import *
 from pygame.locals import *
 from mino import *
 
-# test
-# pull request test
 # Constants
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
@@ -32,7 +30,7 @@ pygame.key.set_repeat(500)
 
 class ui_variables:
     # Fonts
-    font_path = "./assets/fonts/NanumGothicCoding.ttf.ttf"
+    font_path = "./assets/fonts/OpenSans-Light.ttf"
     font_path_b = "./assets/fonts/OpenSans-Bold.ttf"
     font_path_i = "./assets/fonts/Inconsolata/Inconsolata.otf"
 
@@ -673,6 +671,7 @@ pvp_over = False
 
 # Initial values
 score = 0
+max_score = 99999
 score_2P = 0
 level = 1
 level_2P = 1
@@ -801,6 +800,7 @@ while not done:
                     framerate = 30
                     fever_score = 500
                     next_fever = 500
+                    max_score = 99999
                     fever_interval = 3
                     score = 0
                     fever = 0
@@ -938,31 +938,33 @@ while not done:
                     level += 1
                     goal += level * 2
                     framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
+                    # 레벨업시 이미지 출력
                     screen.blit(pygame.transform.scale(ui_variables.levelup,
                                                        (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
-                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
+                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))
                     pygame.display.update()
                     pygame.time.delay(250)
+                    # 기존있던블럭들 한칸증가
                     for j in range(height):
                         for i in range(width):
-                            matrix[i][j] = matrix[i][j + 1]  # 기존있던블럭들 한칸증가
-
+                            matrix[i][j] = matrix[i][j + 1]
+                    # 방해블록이 맨밑줄을 채움 # 회색블록 = 9 ,  한군데가 구멍나있게 증가
                     for i in range(width):
-                        matrix[i][height] = 9  # 방해블록이 맨밑줄을 채움 # 회색블록 = 9
+                        matrix[i][height] = 9
                     k = randint(1, 9)
-                    matrix[k][height] = 0  # 한군데가 구멍나있게 증가
+                    matrix[k][height] = 0
 
                 # 점수 구간에 따른 피버타임 #fever_interval=3
-                for i in range(1, 99999, fever_interval):
+                for i in range(1, max_score, fever_interval):
                     if score > i * fever_score and score < (i + 1) * fever_score:  # 500~1000,2000~2500.3500~4000
                         mino = randint(1, 1)
                         next_mino = randint(1, 1)
                         next_fever = (i + fever_interval) * fever_score
-
+                        # fever time시 이미지 깜빡거리게
                         if blink:
                             screen.blit(pygame.transform.scale(ui_variables.fever_image,
                                                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
-                                        (SCREEN_WIDTH * 0.01, SCREEN_HEIGHT * 0.1))  # fever time시 이미지 깜빡거리게
+                                        (SCREEN_WIDTH * 0.01, SCREEN_HEIGHT * 0.1))
                             blink = False
                         else:
                             blink = True
@@ -1298,7 +1300,7 @@ while not done:
                 attack_score = fever_score        # attack_score = 500
 
                 #1P
-                for i in range(2, 99, attack_interval):
+                for i in range(2, max_score, attack_interval):
                     if score > i * attack_score and score < (i * attack_score + 300):  # 1000~1300,2500~2800,4000~4300
                         if blink:
                             screen.blit(pygame.transform.scale(ui_variables.pvp_annoying_image,
@@ -1663,6 +1665,7 @@ while not done:
                     framerate = 30
                     fever_score = 500
                     score = 0
+                    max_score = 99999
                     next_fever = 500
                     fever_interval = 3
                     level = 1
@@ -1799,6 +1802,7 @@ while not done:
                     hold_mino = -1
                     framerate = 30
                     fever_score = 500
+                    max_score = 99999
                     score = 0
                     next_fever = 500
                     fever_interval = 3
@@ -2238,27 +2242,27 @@ while not done:
                                 # start game with selected difficulty
                                 ui_variables.click_sound.play()
                                 start = True
-                                init_game(width, height, selected)
+                                init_game(DEFAULT_WIDTH, DEFAULT_HEIGHT, selected)
 
                                 # PvP mode page
                             if selected == 3:
                                 ui_variables.click_sound.play()
                                 pvp = True
                                 start = False
-                                init_game(width, height, normal_difficulty)
+                                init_game(DEFAULT_WIDTH, DEFAULT_HEIGHT, normal_difficulty)
 
                             if selected == 4:
                                 # start game with small size
                                 ui_variables.click_sound.play()
                                 start = True
-                                init_game(width, int(height / 2), normal_difficulty)
+                                init_game(DEFAULT_WIDTH, int(DEFAULT_HEIGHT / 2), hard_difficulty)
 
                                 # Reverse mode page
                             if selected == 5:
                                 ui_variables.click_sound.play()
                                 start = True
                                 reverse = True
-                                init_game(width, height, normal_difficulty)
+                                init_game(DEFAULT_WIDTH, DEFAULT_HEIGHT, normal_difficulty)
 
 
                     # 마우스로 창크기조절
@@ -2279,12 +2283,12 @@ while not done:
                              int(SCREEN_HEIGHT * 0.24))
                     )
                 )
-
+                font2 = pygame.font.Font('assets/fonts/NanumGothicCoding-Bold.ttf', 15)
                 difficulty_name = DIFFICULTY_NAMES[current_selected]
                 difficulty_explain = DIFFICULTY_EXPLAINES[current_selected]
 
                 title = ui_variables.h1.render(difficulty_name, 1, ui_variables.white)
-                title_explain = ui_variables.h5.render(difficulty_explain, 1, ui_variables.grey_1)
+                title_explain = font2.render(difficulty_explain, 1, ui_variables.grey_1)
                 title_info = ui_variables.h6.render("Press left and right to change, space to start", 1,
                                                     ui_variables.grey_1)
 

@@ -32,7 +32,7 @@ pygame.key.set_repeat(500)
 
 class ui_variables:
     # Fonts
-    font_path = "./assets/fonts/OpenSans-Light.ttf"
+    font_path = "./assets/fonts/NanumGothicCoding.ttf.ttf"
     font_path_b = "./assets/fonts/OpenSans-Bold.ttf"
     font_path_i = "./assets/fonts/Inconsolata/Inconsolata.otf"
 

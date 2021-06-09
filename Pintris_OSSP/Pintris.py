@@ -943,7 +943,7 @@ while not done:
                                                        (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
                                 (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))
                     pygame.display.update()
-                    pygame.time.delay(250)
+                    pygame.time.delay(200)
                     # 기존있던블럭들 한칸증가
                     for j in range(height):
                         for i in range(width):
@@ -981,7 +981,7 @@ while not done:
                     while not is_bottom(dx, dy, mino, rotation):
                         dy += 1
                     hard_drop = True
-                    pygame.time.set_timer(pygame.USEREVENT, 1)
+                    pygame.time.set_timer(pygame.USEREVENT, 2)
                     draw_mino(dx, dy, mino, rotation)
                     if reverse:
                         draw_reverse_board(next_mino, hold_mino, score, level, goal)
@@ -1363,7 +1363,7 @@ while not done:
                     while not is_bottom(dx, dy, mino, rotation):
                         dy += 1
                     hard_drop = True
-                    pygame.time.set_timer(pygame.USEREVENT, 1)
+                    pygame.time.set_timer(pygame.USEREVENT, 2)
                     draw_mino(dx, dy, mino, rotation)
                     draw_mino_2P(dx_2P, dy_2P, mino_2P, rotation_2P)
                     draw_multiboard(next_mino, hold_mino, next_mino_2P, hold_mino_2P)
@@ -1373,7 +1373,7 @@ while not done:
                     while not is_bottom_2P(dx_2P, dy_2P, mino_2P, rotation_2P):
                         dy_2P += 1
                     hard_drop_2P = True
-                    pygame.time.set_timer(pygame.USEREVENT, 1)
+                    pygame.time.set_timer(pygame.USEREVENT, 2)
                     draw_mino(dx, dy, mino, rotation)
                     draw_mino_2P(dx_2P, dy_2P, mino_2P, rotation_2P)
                     draw_multiboard(next_mino, hold_mino, next_mino_2P, hold_mino_2P)

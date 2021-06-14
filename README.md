@@ -78,6 +78,16 @@ help 페이지에서 조작키를 볼 수 있습니다. 조작법은 다음과 �
 |메인으로 돌아가기|ESC 후 Enter|
 
 ---
+
+## How to play / 실행방법
+```
+Windows
+    Execute the command below
+    
+    python ompytris.py
+
+```
+
 ## License / 라이센스
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/CSID-DGU/2021-1-OSSPC-Pint-9/blob/main/LICENSE) 이 프로젝트는 MIT 라이센스로 라이센스가 부여되어 있습니다. 자세한 내용은 LICENSE 파일을 참고하세요.

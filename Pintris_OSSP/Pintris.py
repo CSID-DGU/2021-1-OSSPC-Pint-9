@@ -25,8 +25,13 @@ mino_turn = 4
 
 framerate = 30  # Bigger -> Slower
 
+min_width = 700
+min_height = 350
+board_rate = 0.5
+
 pygame.init()
 pygame.key.set_repeat(500)
+
 
 class ui_variables:
     # Fonts
@@ -68,7 +73,7 @@ class ui_variables:
     grey_1 = (26, 26, 26)  # rgb(26, 26, 26)
     grey_2 = (35, 35, 35)  # rgb(35, 35, 35)
     grey_3 = (55, 55, 55)  # rgb(55, 55, 55)
-    grey_4 = (100,100,100)
+    grey_4 = (100, 100, 100)
     # Tetrimino colors
     cyan = (69, 206, 204)  # rgb(69, 206, 204) # I
     blue = (64, 111, 249)  # rgb(64, 111, 249) # J
@@ -90,6 +95,7 @@ def set_volume():
     ui_variables.double_sound.set_volume(effect_volume / 10)
     ui_variables.triple_sound.set_volume(effect_volume / 10)
     ui_variables.tetris_sound.set_volume(effect_volume / 10)
+
 
 # Draw block
 def draw_block(x, y, color):
@@ -737,6 +743,7 @@ leaders = sorted(leaders.items(), key=operator.itemgetter(1), reverse=True)
 matrix = [[0 for y in range(height + 1)] for x in range(width)]  # Board matrix
 matrix_2P = [[0 for y in range(height + 1)] for x in range(width)]
 
+
 # 초기화 부분을 하나로 합쳐준다.
 def init_game(board_width, board_height, game_difficulty):
     global width, height, matrix, matrix_2P, difficulty, framerate
@@ -749,6 +756,7 @@ def init_game(board_width, board_height, game_difficulty):
 
     difficulty = game_difficulty
     framerate = STARTING_FRAMERATE_BY_DIFFCULTY[difficulty]
+
 
 ###########################################################
 # Loop Start
@@ -816,6 +824,10 @@ while not done:
                     normal_difficulty = 1
                     hard_difficulty = 2
 
+                    min_width = 700
+                    min_height = 350
+                    board_rate = 0.5
+
                     hold_2P = False
                     dx_2P, dy_2P = 3, 0
                     rotation_2P = 0
@@ -842,10 +854,30 @@ while not done:
                     if reverse:
                         reverse = False
 
+
             elif event.type == VIDEORESIZE:
+
                 SCREEN_WIDTH = event.w
+
                 SCREEN_HEIGHT = event.h
+
+                if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                    SCREEN_WIDTH = min_width
+
+                    SCREEN_HEIGHT = min_height
+
+                if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                        board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                    SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                    SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                 block_size = int(SCREEN_HEIGHT * 0.045)
+
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
     # Game screen
     elif start:
@@ -1117,16 +1149,34 @@ while not done:
             elif event.type == KEYUP:
                 pygame.key.set_repeat(300)
 
+
             elif event.type == VIDEORESIZE:
+
                 SCREEN_WIDTH = event.w
+
                 SCREEN_HEIGHT = event.h
+
+                if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                    SCREEN_WIDTH = min_width
+
+                    SCREEN_HEIGHT = min_height
+
+                if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                        board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                    SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                    SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
                 block_size = int(SCREEN_HEIGHT * 0.045)
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
         pygame.display.update()
 
 
     elif pvp:
-        pygame.key.set_repeat(0) # 키반복 비활성화
+        pygame.key.set_repeat(0)  # 키반복 비활성화
         for event in pygame.event.get():
             if event.type == QUIT:
                 done = True
@@ -1297,24 +1347,25 @@ while not done:
                 # 상대방 시야 방해
                 # fever_score, fever_interval 값을 이용하여 나타냄
                 attack_interval = fever_interval  # attack_interval = 3
-                attack_score = fever_score        # attack_score = 500
+                attack_score = fever_score  # attack_score = 500
 
-                #1P
+                # 1P
                 for i in range(2, max_score, attack_interval):
                     if score > i * attack_score and score < (i * attack_score + 300):  # 1000~1300,2500~2800,4000~4300
                         if blink:
                             screen.blit(pygame.transform.scale(ui_variables.pvp_annoying_image,
-                                        (int(SCREEN_WIDTH * 0.4), int(SCREEN_HEIGHT * 0.9))),
+                                                               (int(SCREEN_WIDTH * 0.4), int(SCREEN_HEIGHT * 0.9))),
                                         (SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0))  # 이미지 깜빡거리게
                             blink = False
                         else:
                             blink = True
-                #2P
+                # 2P
                 for j in range(2, 99, attack_interval):
-                    if score_2P > j * attack_score and score_2P < (j * attack_score + 300):  # 1000~1300,2500~2800,4000~4300
+                    if score_2P > j * attack_score and score_2P < (
+                            j * attack_score + 300):  # 1000~1300,2500~2800,4000~4300
                         if blink:
                             screen.blit(pygame.transform.scale(ui_variables.pvp_annoying_image,
-                                        (int(SCREEN_WIDTH * 0.4), int(SCREEN_HEIGHT * 0.9))),
+                                                               (int(SCREEN_WIDTH * 0.4), int(SCREEN_HEIGHT * 0.9))),
                                         (SCREEN_WIDTH * 0, SCREEN_HEIGHT * 0))  # 이미지 깜빡거리게
                             blink = False
                         else:
@@ -1326,7 +1377,7 @@ while not done:
                     erase_stack_2P = 0
                     framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
                     screen.blit(pygame.transform.scale(ui_variables.levelup,
-                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                                       (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
                                 (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
                     pygame.display.update()
                     pygame.time.delay(300)
@@ -1335,7 +1386,7 @@ while not done:
                     erase_stack_2P = 0
                     framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
                     screen.blit(pygame.transform.scale(ui_variables.levelup,
-                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                                       (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
                                 (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
                     pygame.display.update()
                     pygame.time.delay(300)
@@ -1344,7 +1395,7 @@ while not done:
                     erase_stack_2P = 0
                     framerate = math.ceil(framerate * FRAMELATE_MULTIFLIER_BY_DIFFCULTY[difficulty])
                     screen.blit(pygame.transform.scale(ui_variables.levelup,
-                                (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
+                                                       (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2))),
                                 (int(SCREEN_WIDTH * 0.3), int(SCREEN_HEIGHT * 0.2)))  # 레벨업시 이미지 출력
                     pygame.display.update()
                     pygame.time.delay(300)
@@ -1586,10 +1637,30 @@ while not done:
                     draw_mino_2P(dx_2P, dy_2P, mino_2P, rotation_2P)
                     draw_multiboard(next_mino, hold_mino, next_mino_2P, hold_mino_2P)
 
+
             elif event.type == VIDEORESIZE:
+
                 SCREEN_WIDTH = event.w
+
                 SCREEN_HEIGHT = event.h
+
+                if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                    SCREEN_WIDTH = min_width
+
+                    SCREEN_HEIGHT = min_height
+
+                if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                        board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                    SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                    SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                 block_size = int(SCREEN_HEIGHT * 0.045)
+
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
         pygame.display.update()
 
@@ -1638,9 +1709,28 @@ while not done:
                 pygame.display.update()
             # 마우스로 창크기조절
             elif event.type == VIDEORESIZE:
+
                 SCREEN_WIDTH = event.w
+
                 SCREEN_HEIGHT = event.h
+
+                if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                    SCREEN_WIDTH = min_width
+
+                    SCREEN_HEIGHT = min_height
+
+                if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                        board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                    SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                    SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                 block_size = int(SCREEN_HEIGHT * 0.045)
+
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 pygame.display.update()
             elif event.type == KEYDOWN:
@@ -1671,6 +1761,9 @@ while not done:
                     level = 1
                     goal = level * 5
                     bottom_count = 0
+                    min_width = 700
+                    min_height = 350
+                    board_rate = 0.5
                     hard_drop = False
                     name_location = 0
                     name = [65, 65, 65]
@@ -1757,7 +1850,7 @@ while not done:
 
                 screen.blit(over_text_1, (SCREEN_WIDTH * 0.0775, SCREEN_HEIGHT * 0.167))
                 screen.blit(over_text_2, (SCREEN_WIDTH * 0.0775, SCREEN_HEIGHT * 0.233))
-                screen.blit(over_start, (SCREEN_WIDTH * 0.033 , SCREEN_HEIGHT * 0.3333))
+                screen.blit(over_start, (SCREEN_WIDTH * 0.033, SCREEN_HEIGHT * 0.3333))
 
                 # win-lose 이미지 출력
                 if player == 1:
@@ -1780,9 +1873,28 @@ while not done:
 
             # 마우스로 창크기조절
             elif event.type == VIDEORESIZE:
+
                 SCREEN_WIDTH = event.w
+
                 SCREEN_HEIGHT = event.h
+
+                if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                    SCREEN_WIDTH = min_width
+
+                    SCREEN_HEIGHT = min_height
+
+                if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                        board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                    SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                    SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                 block_size = int(SCREEN_HEIGHT * 0.045)
+
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 pygame.display.update()
 
@@ -1817,6 +1929,10 @@ while not done:
                     easy_difficulty = 0
                     normal_difficulty = 1
                     hard_difficulty = 2
+
+                    min_width = 700
+                    min_height = 350
+                    board_rate = 0.5
 
                     # PvP모드
                     hold_2P = False
@@ -1868,10 +1984,28 @@ while not done:
                             ui_variables.click_sound.play()
                             page, selected = MENU_PAGE, 0
                     elif event.type == VIDEORESIZE:
+
                         SCREEN_WIDTH = event.w
+
                         SCREEN_HEIGHT = event.h
 
+                        if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                            SCREEN_WIDTH = min_width
+
+                            SCREEN_HEIGHT = min_height
+
+                        if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                                board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                            SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                            SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                         block_size = int(SCREEN_HEIGHT * 0.045)
+
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
@@ -1944,9 +2078,28 @@ while not done:
                                 page, selected = SETTING_PAGE, 0
                     # 마우스로 창크기조절
                     elif event.type == VIDEORESIZE:
+
                         SCREEN_WIDTH = event.w
+
                         SCREEN_HEIGHT = event.h
+
+                        if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                            SCREEN_WIDTH = min_width
+
+                            SCREEN_HEIGHT = min_height
+
+                        if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                                board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                            SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                            SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                         block_size = int(SCREEN_HEIGHT * 0.045)
+
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
@@ -2003,9 +2156,28 @@ while not done:
                             page, selected = MENU_PAGE, 0
                     # 마우스로 창크기조절
                     elif event.type == VIDEORESIZE:
+
                         SCREEN_WIDTH = event.w
+
                         SCREEN_HEIGHT = event.h
+
+                        if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                            SCREEN_WIDTH = min_width
+
+                            SCREEN_HEIGHT = min_height
+
+                        if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                                board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                            SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                            SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                         block_size = int(SCREEN_HEIGHT * 0.045)
+
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
@@ -2122,9 +2294,28 @@ while not done:
 
                     # 마우스로 창크기조절
                     elif event.type == VIDEORESIZE:
+
                         SCREEN_WIDTH = event.w
+
                         SCREEN_HEIGHT = event.h
+
+                        if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                            SCREEN_WIDTH = min_width
+
+                            SCREEN_HEIGHT = min_height
+
+                        if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                                board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                            SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                            SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                         block_size = int(SCREEN_HEIGHT * 0.045)
+
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
@@ -2267,9 +2458,28 @@ while not done:
 
                     # 마우스로 창크기조절
                     elif event.type == VIDEORESIZE:
+
                         SCREEN_WIDTH = event.w
+
                         SCREEN_HEIGHT = event.h
+
+                        if SCREEN_WIDTH < min_width or SCREEN_HEIGHT < min_height:  # 최소 너비 또는 높이를 설정하려는 경우
+
+                            SCREEN_WIDTH = min_width
+
+                            SCREEN_HEIGHT = min_height
+
+                        if not ((board_rate - 0.1) < (SCREEN_HEIGHT / SCREEN_WIDTH) < (
+
+                                board_rate + 0.05)):  # 높이 또는 너비가 비율의 일정수준 이상을 넘어서게 되면
+
+                            SCREEN_WIDTH = int(SCREEN_HEIGHT / board_rate)  # 너비를 적정 비율로 바꿔줌
+
+                            SCREEN_HEIGHT = int(SCREEN_WIDTH * board_rate)  # 높이를 적정 비율로 바꿔줌
+
                         block_size = int(SCREEN_HEIGHT * 0.045)
+
+                        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
                 block_size = int(SCREEN_HEIGHT * 0.045)
                 screen.fill(ui_variables.white)
@@ -2309,5 +2519,4 @@ while not done:
             if not start:
                 pygame.display.update()
                 clock.tick(3)
-
 pygame.quit()
